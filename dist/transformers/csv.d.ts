@@ -1,0 +1,19 @@
+import { Import } from '../interfaces';
+import { BaseCSV } from './base_csv';
+export declare class CSV extends BaseCSV implements Import {
+    protected importMapping: any;
+    getImportParams(): {
+        id: string;
+        name: string;
+        networks: string[];
+        description: string;
+        params: {
+            name: string;
+            type: string;
+            fileType: string;
+            message: string;
+            default: string;
+            mandatory: boolean;
+        }[];
+    };
+}
