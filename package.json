@@ -1,0 +1,20 @@
+{
+  "name": "particl-market-import-core",
+  "version": "0.0.1",
+  "description": "Core processing unit for the Particl Marketplace imports",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Robert Edwards",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.8",
+    "got": "^9.6.0",
+    "jimp": "^0.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.3"
+  }
+}
