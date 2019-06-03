@@ -5,7 +5,11 @@ import fs from 'fs';
 
 export abstract class BaseCSV {
 
+  protected importParams: any;
+
 	async load(params: any) {
+    this.importParams = params;
+
 		const listings: ListingTemplate[] = [];
 
 		const text = await fs.readFileSync(params.file, "utf8");
@@ -81,4 +85,8 @@ export abstract class BaseCSV {
   }
   
   protected abstract importMapping: any;
+
+  protected getimportParam(name: string) {
+    return this.importParams[name];
+  }
 }

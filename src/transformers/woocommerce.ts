@@ -13,7 +13,7 @@ export class Woocommerce extends BaseCSV implements Import {
     basePrice: {
       field: 'Regular price',
       translate: (price: string) => {
-        return parseFloat(price) * 0.02; // Currency Converter
+        return parseFloat(price) * this.getimportParam('currency_rate');
       }
     },
     domesticShippingPrice: undefined,
@@ -38,6 +38,13 @@ export class Woocommerce extends BaseCSV implements Import {
 					type: 'file',
 					fileType: '.csv',
 					message: 'Woocommerce export file',
+					default: '',
+					mandatory: true
+        },
+        {
+					name: 'currency_rate',
+					type: 'number',
+					message: 'Currency rate',
 					default: '',
 					mandatory: true
 				}

@@ -62,7 +62,7 @@ var Woocommerce = /** @class */ (function (_super) {
             basePrice: {
                 field: 'Regular price',
                 translate: function (price) {
-                    return parseFloat(price) * 0.02; // Currency Converter
+                    return parseFloat(price) * _this.getimportParam('currency_rate');
                 }
             },
             domesticShippingPrice: undefined,
@@ -93,6 +93,13 @@ var Woocommerce = /** @class */ (function (_super) {
                     type: 'file',
                     fileType: '.csv',
                     message: 'Woocommerce export file',
+                    default: '',
+                    mandatory: true
+                },
+                {
+                    name: 'currency_rate',
+                    type: 'number',
+                    message: 'Currency rate',
                     default: '',
                     mandatory: true
                 }

@@ -49,6 +49,7 @@ var BaseCSV = /** @class */ (function () {
             return __generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
+                        this.importParams = params;
                         listings = [];
                         return [4 /*yield*/, fs_1.default.readFileSync(params.file, "utf8")];
                     case 1:
@@ -137,6 +138,9 @@ var BaseCSV = /** @class */ (function () {
                 }
             }
         }
+    };
+    BaseCSV.prototype.getimportParam = function (name) {
+        return this.importParams[name];
     };
     return BaseCSV;
 }());
