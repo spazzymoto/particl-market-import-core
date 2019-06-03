@@ -60,7 +60,12 @@ var BaseCSV = /** @class */ (function () {
                         if (csvData.length === 0) {
                             return [2 /*return*/, listings];
                         }
-                        this.checkImportMapping(csvData);
+                        try {
+                            this.checkImportMapping(csvData);
+                        }
+                        catch (e) {
+                            throw e;
+                        }
                         _i = 0, csvData_1 = csvData;
                         _g.label = 3;
                     case 3:

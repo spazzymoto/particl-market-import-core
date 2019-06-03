@@ -19,7 +19,11 @@ export abstract class BaseCSV {
 			return listings;
 		}
 
-		this.checkImportMapping(csvData);
+    try {
+      this.checkImportMapping(csvData);
+    } catch (e) {
+      throw e;
+    }
 
     for (const item of csvData) {
       const transformed: any = {};
