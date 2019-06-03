@@ -58,7 +58,7 @@ var Utils = /** @class */ (function () {
                         if (!(_i < imagePaths_1.length)) return [3 /*break*/, 9];
                         imagePath = imagePaths_1[_i];
                         imageBuffer = void 0;
-                        if (!(imagePath.startsWith('http://') || imagePath.startsWith('http://'))) return [3 /*break*/, 3];
+                        if (!(imagePath.startsWith('https://') || imagePath.startsWith('http://'))) return [3 /*break*/, 3];
                         return [4 /*yield*/, got(imagePath, {
                                 encoding: null
                             })];
