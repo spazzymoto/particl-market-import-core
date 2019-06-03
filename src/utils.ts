@@ -10,7 +10,7 @@ export class Utils {
 		const images = [];
 		for (let imagePath of imagePaths) {
 			let imageBuffer: Buffer;
-			if (imagePath.startsWith('http://') || imagePath.startsWith('http://')) {
+			if (imagePath.startsWith('https://') || imagePath.startsWith('http://')) {
 				const response = await got(imagePath, {
 					encoding: null
 				});
