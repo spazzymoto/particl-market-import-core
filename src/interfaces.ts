@@ -3,11 +3,16 @@ export interface Import {
   getImportParams(): any;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+}
+
 export interface ListingTemplate {
   title: string;
   shortDescription: string;
   longDescription: string;
-  category: number;
+  category: Category;
   basePrice: number;
   domesticShippingPrice: number;
   internationalShippingPrice: number;

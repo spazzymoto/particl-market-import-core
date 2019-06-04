@@ -40,6 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = __importDefault(require("fs"));
 var jimp_1 = __importDefault(require("jimp"));
+var market_rpc_1 = require("./market-rpc");
 var got = require('got');
 var Utils = /** @class */ (function () {
     function Utils() {
@@ -137,6 +138,37 @@ var Utils = /** @class */ (function () {
                                         resolve(imageBuffer);
                                     }
                                     return [2 /*return*/];
+                            }
+                        });
+                    }); })];
+            });
+        });
+    };
+    Utils.searchCategories = function (category) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var response, e_2;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    _a.trys.push([0, 2, , 3]);
+                                    return [4 /*yield*/, market_rpc_1.MarketRPC.call('category', ['search', category])];
+                                case 1:
+                                    response = _a.sent();
+                                    if (response.body.result && response.body.result[0]) {
+                                        return [2 /*return*/, resolve({
+                                                id: response.body.result[0].id,
+                                                name: response.body.result[0].name
+                                            })];
+                                    }
+                                    return [2 /*return*/, resolve(null)];
+                                case 2:
+                                    e_2 = _a.sent();
+                                    reject(e_2);
+                                    return [3 /*break*/, 3];
+                                case 3: return [2 /*return*/];
                             }
                         });
                     }); })];

@@ -9,7 +9,12 @@ export class CSV extends BaseCSV implements Import {
 		title: 'title',
 		shortDescription: 'short_description',
 		longDescription: 'long_description',
-		category: 'category',
+		category: {
+			field: 'category',
+			translate: async (catagory: string) => {
+				return await Utils.searchCategories(catagory);
+			}
+		},
 		basePrice: 'base_price',
 		domesticShippingPrice: 'domestic_shipping_price',
 		internationalShippingPrice: 'international_shipping_price',

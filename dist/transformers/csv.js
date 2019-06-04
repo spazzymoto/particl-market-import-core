@@ -58,7 +58,17 @@ var CSV = /** @class */ (function (_super) {
             title: 'title',
             shortDescription: 'short_description',
             longDescription: 'long_description',
-            category: 'category',
+            category: {
+                field: 'category',
+                translate: function (catagory) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, utils_1.Utils.searchCategories(catagory)];
+                            case 1: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                }); }
+            },
             basePrice: 'base_price',
             domesticShippingPrice: 'domestic_shipping_price',
             internationalShippingPrice: 'international_shipping_price',

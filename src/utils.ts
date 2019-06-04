@@ -1,5 +1,7 @@
 import fs from 'fs';
 import Jimp from 'jimp';
+import { MarketRPC } from './market-rpc';
+import { Category } from './interfaces';
 
 const got = require('got');
 
@@ -53,6 +55,23 @@ export class Utils {
 				});
 			} else {
 				resolve(imageBuffer);
+			}
+		});
+	}
+
+	static async searchCategories(category: string):	Promise<Category | null> {
+		return new Promise(async (resolve, reject) => {
+			try {
+				const response = await MarketRPC.call('category', ['search', category]);
+				if (response.body.result && response.body.result[0]) {
+					return resolve({
+						id: response.body.result[0].id,
+						name: response.body.result[0].name
+					});
+				}
+				return resolve(null);
+			} catch (e) {
+				reject(e);
 			}
 		});
 	}
