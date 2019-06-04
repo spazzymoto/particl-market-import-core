@@ -41,18 +41,18 @@ var ListingManager = /** @class */ (function () {
     }
     ListingManager.validate = function (listings, country, expTime) {
         return __awaiter(this, void 0, void 0, function () {
-            var _i, listings_1, listing, missing, templateId, templateSize, feeEstimate;
+            var _i, listings_1, listing, missing, templateId, templateSize, feeEstimate, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _i = 0, listings_1 = listings;
                         _a.label = 1;
                     case 1:
-                        if (!(_i < listings_1.length)) return [3 /*break*/, 9];
+                        if (!(_i < listings_1.length)) return [3 /*break*/, 13];
                         listing = listings_1[_i];
                         listing.validationError = '';
                         if (!listing.publish) {
-                            return [3 /*break*/, 8];
+                            return [3 /*break*/, 12];
                         }
                         missing = '';
                         if (!listing.title.trim()) {
@@ -79,38 +79,50 @@ var ListingManager = /** @class */ (function () {
                         if (missing) {
                             missing = missing.substring(0, missing.length - 2);
                             listing.validationError = "The following fields are missing " + missing + ". Please correct these before publishing.";
-                            return [3 /*break*/, 8];
+                            return [3 /*break*/, 12];
                         }
-                        if (!(country && expTime)) return [3 /*break*/, 8];
-                        return [4 /*yield*/, this.createListingTemplate(listing, country)];
+                        if (!(country && expTime)) return [3 /*break*/, 12];
+                        templateId = void 0;
+                        _a.label = 2;
                     case 2:
-                        templateId = _a.sent();
-                        return [4 /*yield*/, this.sizeTemplate(templateId)];
+                        _a.trys.push([2, 8, 9, 12]);
+                        return [4 /*yield*/, this.createListingTemplate(listing, country)];
                     case 3:
+                        templateId = _a.sent();
+                        return [4 /*yield*/, this.sizeTemplate(templateId.id)];
+                    case 4:
                         templateSize = _a.sent();
-                        if (!!templateSize.fits) return [3 /*break*/, 4];
+                        if (!!templateSize.fits) return [3 /*break*/, 5];
                         listing.validationError = 'The listing is to big, please remove some text and/or images.';
-                        return [3 /*break*/, 6];
-                    case 4: return [4 /*yield*/, this.postTemplate(templateId, 1, expTime, true)];
-                    case 5:
+                        return [3 /*break*/, 7];
+                    case 5: return [4 /*yield*/, this.postTemplate(templateId, 1, expTime, true)];
+                    case 6:
                         feeEstimate = _a.sent();
                         listing.fee = +feeEstimate.fee;
-                        _a.label = 6;
-                    case 6: return [4 /*yield*/, this.removeTemplate(templateId)];
-                    case 7:
-                        _a.sent();
-                        _a.label = 8;
+                        _a.label = 7;
+                    case 7: return [3 /*break*/, 12];
                     case 8:
+                        e_1 = _a.sent();
+                        listing.validationError = e_1.body.error;
+                        return [3 /*break*/, 12];
+                    case 9:
+                        if (!templateId) return [3 /*break*/, 11];
+                        return [4 /*yield*/, this.removeTemplate(templateId.id)];
+                    case 10:
+                        _a.sent();
+                        _a.label = 11;
+                    case 11: return [7 /*endfinally*/];
+                    case 12:
                         _i++;
                         return [3 /*break*/, 1];
-                    case 9: return [2 /*return*/, listings];
+                    case 13: return [2 /*return*/, listings];
                 }
             });
         });
     };
     ListingManager.createListingTemplate = function (listing, country) {
         return __awaiter(this, void 0, void 0, function () {
-            var templateParams, template, e_1, locationParams, e_2, escrowParams, e_3;
+            var templateParams, template, e_2, locationParams, e_3, escrowParams, e_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -120,12 +132,12 @@ var ListingManager = /** @class */ (function () {
                             listing.title,
                             listing.shortDescription,
                             listing.longDescription,
-                            listing.category,
+                            listing.category.id,
                             'SALE',
                             'PARTICL',
-                            listing.basePrice,
-                            listing.domesticShippingPrice,
-                            listing.internationalShippingPrice
+                            +listing.basePrice,
+                            +listing.domesticShippingPrice,
+                            +listing.internationalShippingPrice
                         ];
                         _a.label = 1;
                     case 1:
@@ -135,8 +147,8 @@ var ListingManager = /** @class */ (function () {
                         template = _a.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        e_1 = _a.sent();
-                        throw e_1;
+                        e_2 = _a.sent();
+                        throw e_2;
                     case 4:
                         locationParams = [
                             'location',
@@ -153,11 +165,11 @@ var ListingManager = /** @class */ (function () {
                         _a.sent();
                         return [3 /*break*/, 9];
                     case 7:
-                        e_2 = _a.sent();
+                        e_3 = _a.sent();
                         return [4 /*yield*/, this.removeTemplate(template.id)];
                     case 8:
                         _a.sent();
-                        throw e_2;
+                        throw e_3;
                     case 9:
                         escrowParams = [
                             'escrow',
@@ -175,11 +187,11 @@ var ListingManager = /** @class */ (function () {
                         _a.sent();
                         return [3 /*break*/, 14];
                     case 12:
-                        e_3 = _a.sent();
+                        e_4 = _a.sent();
                         return [4 /*yield*/, this.removeTemplate(template.id)];
                     case 13:
                         _a.sent();
-                        throw e_3;
+                        throw e_4;
                     case 14: 
                     // try {
                     //   await MarketRPC.uploadImage(template.id, listing.images);
@@ -187,8 +199,16 @@ var ListingManager = /** @class */ (function () {
                     //   await this.removeTemplate(template.id);
                     //   throw e;
                     // }
-                    return [2 /*return*/, template.id];
+                    return [2 /*return*/, this.getTemplate(template.id)];
                 }
+            });
+        });
+    };
+    ListingManager.getTemplate = function (id, returnImageData) {
+        if (returnImageData === void 0) { returnImageData = false; }
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, market_rpc_1.MarketRPC.call('template', ['get', id, returnImageData])];
             });
         });
     };

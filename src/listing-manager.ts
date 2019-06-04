@@ -48,17 +48,26 @@ export class ListingManager {
       }
 
       if (country && expTime) {
-        const templateId = await this.createListingTemplate(listing, country);
-        const templateSize = await this.sizeTemplate(templateId);
+        let templateId;
+        try {
+          templateId = await this.createListingTemplate(listing, country);
 
-        if (!templateSize.fits) {
-          listing.validationError = 'The listing is to big, please remove some text and/or images.';
-        } else {
-          const feeEstimate = await this.postTemplate(templateId, 1, expTime, true);
-          listing.fee = +feeEstimate.fee;
+          const templateSize = await this.sizeTemplate(templateId.id);
+
+          if (!templateSize.fits) {
+            listing.validationError = 'The listing is to big, please remove some text and/or images.';
+          } else {
+            const feeEstimate = await this.postTemplate(templateId, 1, expTime, true);
+
+            listing.fee = +feeEstimate.fee;
+          }
+        } catch (e) {
+          listing.validationError = e.body.error;
+        } finally {
+          if (templateId) {
+            await this.removeTemplate(templateId.id);
+          }
         }
-
-        await this.removeTemplate(templateId);
       }
       
     }
@@ -73,14 +82,14 @@ export class ListingManager {
       listing.title,
       listing.shortDescription,
       listing.longDescription,
-      listing.category,
+      listing.category.id,
       'SALE',
       'PARTICL',
-      listing.basePrice,
-      listing.domesticShippingPrice,
-      listing.internationalShippingPrice
+      +listing.basePrice,
+      +listing.domesticShippingPrice,
+      +listing.internationalShippingPrice
     ];
-    
+
     let template;
     try {
       template = await MarketRPC.call('template', templateParams);
@@ -126,7 +135,11 @@ export class ListingManager {
     //   throw e;
     // }
 
-    return template.id;
+    return this.getTemplate(template.id);
+  }
+
+  private static async getTemplate(id: number, returnImageData: boolean = false) {
+    return MarketRPC.call('template', ['get', id, returnImageData]);
   }
 
   private static async sizeTemplate(id: number) {
