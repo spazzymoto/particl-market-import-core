@@ -50,6 +50,7 @@ export abstract class BaseCSV {
         }
         
       }
+      transformed.publish = true;
 
       listings.push(<ListingTemplate>transformed);
     }

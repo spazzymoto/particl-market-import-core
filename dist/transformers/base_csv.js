@@ -112,6 +112,7 @@ var BaseCSV = /** @class */ (function () {
                         _c++;
                         return [3 /*break*/, 4];
                     case 10:
+                        transformed.publish = true;
                         listings.push(transformed);
                         _g.label = 11;
                     case 11:

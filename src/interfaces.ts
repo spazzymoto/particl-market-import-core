@@ -18,4 +18,5 @@ export interface ListingTemplate {
   internationalShippingPrice: number;
   images: string[];
   publish: boolean;
+  validationError: string;
 }
