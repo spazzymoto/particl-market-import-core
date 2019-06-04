@@ -95,11 +95,13 @@ var Utils = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                        var image;
+                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var image, e_2;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, jimp_1.default.read(imageBuffer)];
+                                case 0:
+                                    _a.trys.push([0, 2, , 3]);
+                                    return [4 /*yield*/, jimp_1.default.read(imageBuffer)];
                                 case 1:
                                     image = _a.sent();
                                     if (image.getMIME() !== 'image/jpeg') {
@@ -110,7 +112,11 @@ var Utils = /** @class */ (function () {
                                     else {
                                         resolve(imageBuffer);
                                     }
-                                    return [2 /*return*/];
+                                    return [3 /*break*/, 3];
+                                case 2:
+                                    e_2 = _a.sent();
+                                    return [2 /*return*/, reject(e_2)];
+                                case 3: return [2 /*return*/];
                             }
                         });
                     }); })];
@@ -121,11 +127,13 @@ var Utils = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                        var image;
+                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var image, e_3;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, jimp_1.default.read(imageBuffer)];
+                                case 0:
+                                    _a.trys.push([0, 2, , 3]);
+                                    return [4 /*yield*/, jimp_1.default.read(imageBuffer)];
                                 case 1:
                                     image = _a.sent();
                                     if (maxWidth > 0 && maxHeight > 0 && ((image.bitmap.width > maxWidth) || (image.bitmap.height > maxHeight))) {
@@ -137,7 +145,11 @@ var Utils = /** @class */ (function () {
                                     else {
                                         resolve(imageBuffer);
                                     }
-                                    return [2 /*return*/];
+                                    return [3 /*break*/, 3];
+                                case 2:
+                                    e_3 = _a.sent();
+                                    return [2 /*return*/, reject(e_3)];
+                                case 3: return [2 /*return*/];
                             }
                         });
                     }); })];
@@ -149,7 +161,7 @@ var Utils = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var response, e_2;
+                        var response, e_4;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
@@ -165,8 +177,8 @@ var Utils = /** @class */ (function () {
                                     }
                                     return [2 /*return*/, resolve(null)];
                                 case 2:
-                                    e_2 = _a.sent();
-                                    reject(e_2);
+                                    e_4 = _a.sent();
+                                    reject(e_4);
                                     return [3 /*break*/, 3];
                                 case 3: return [2 /*return*/];
                             }

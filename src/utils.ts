@@ -33,28 +33,37 @@ export class Utils {
 	}
 
 	static async convertToJPEG(imageBuffer: Buffer): Promise<Buffer> {
-		return new Promise(async (resolve) => {
-			const image = await Jimp.read(imageBuffer);
-			if (image.getMIME() !== 'image/jpeg') {
-				image.getBuffer(Jimp.MIME_JPEG, (err, buffer) => {
-					resolve(buffer);
-				});
-			} else {
-				resolve(imageBuffer);
+		return new Promise(async (resolve, reject) => {
+			try {
+				const image = await Jimp.read(imageBuffer);
+
+				if (image.getMIME() !== 'image/jpeg') {
+					image.getBuffer(Jimp.MIME_JPEG, (err, buffer) => {
+						resolve(buffer);
+					});
+				} else {
+					resolve(imageBuffer);
+				}
+			} catch (e) {
+				return reject(e);
 			}
 		});
 	}
 
 	static async resizeImageToFit(imageBuffer: Buffer, maxWidth: number, maxHeight: number): Promise<Buffer> {
-		return new Promise(async (resolve) => {
-			const image: any = await Jimp.read(imageBuffer);
-			if (maxWidth > 0 && maxHeight > 0 && ( (image.bitmap.width > maxWidth) || (image.bitmap.height > maxHeight))) {
-				image.scaleToFit(maxWidth, maxHeight);
-				image.getBuffer(Jimp.MIME_JPEG, (err: any, buffer: any) => {
-					resolve(buffer);
-				});
-			} else {
-				resolve(imageBuffer);
+		return new Promise(async (resolve, reject) => {
+			try {
+				const image: any = await Jimp.read(imageBuffer);
+				if (maxWidth > 0 && maxHeight > 0 && ( (image.bitmap.width > maxWidth) || (image.bitmap.height > maxHeight))) {
+					image.scaleToFit(maxWidth, maxHeight);
+					image.getBuffer(Jimp.MIME_JPEG, (err: any, buffer: any) => {
+						resolve(buffer);
+					});
+				} else {
+					resolve(imageBuffer);
+				}
+			} catch (e) {
+				return reject(e);
 			}
 		});
 	}
