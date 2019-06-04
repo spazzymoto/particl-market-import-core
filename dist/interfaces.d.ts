@@ -17,4 +17,5 @@ export interface ListingTemplate {
     images: string[];
     publish: boolean;
     validationError: string;
+    fee: number;
 }

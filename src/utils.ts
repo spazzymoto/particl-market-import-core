@@ -71,11 +71,11 @@ export class Utils {
 	static async searchCategories(category: string):	Promise<Category | null> {
 		return new Promise(async (resolve, reject) => {
 			try {
-				const response = await MarketRPC.call('category', ['search', category]);
-				if (response.body.result && response.body.result[0]) {
+				const result = await MarketRPC.call('category', ['search', category]);
+				if (result && result[0]) {
 					return resolve({
-						id: response.body.result[0].id,
-						name: response.body.result[0].name
+						id: result[0].id,
+						name: result[0].name
 					});
 				}
 				return resolve(null);
