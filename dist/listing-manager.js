@@ -64,7 +64,6 @@ var ListingManager = /** @class */ (function () {
                         return [4 /*yield*/, this.postTemplate(template, 1, expTime)];
                     case 4:
                         _a.sent();
-                        listings.splice(index, 1);
                         return [3 /*break*/, 8];
                     case 5:
                         e_1 = _a.sent();

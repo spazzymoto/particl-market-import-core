@@ -19,8 +19,6 @@ export class ListingManager {
         template = await this.createListingTemplate(listing, country);
 
         await this.postTemplate(template, 1, expTime);
-
-        listings.splice(index, 1);
       } catch (e) {
         listing.validationError = e.body.error;
 
