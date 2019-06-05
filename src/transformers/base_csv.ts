@@ -83,7 +83,7 @@ export abstract class BaseCSV {
         }
 					
         if (!testData.hasOwnProperty(mappedKey)) {
-          throw new Error(`Unable to find field ${mappedKey} in csv file.`)
+          throw new Error(`Unable to find the column "${mappedKey}" in csv file.`)
         }
       }
     }
