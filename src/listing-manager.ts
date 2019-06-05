@@ -3,6 +3,36 @@ import { MarketRPC } from "./market-rpc";
 
 export class ListingManager {
 
+  static async publish(listings: ListingTemplate[], country: string, expTime: number) {
+
+    for (let index = 0; index < listings.length; index++) {
+      const listing = listings[index];
+
+      listing.validationError = '';
+
+      if (!listing.publish) {
+        continue
+      }
+
+      let template;
+      try {
+        template = await this.createListingTemplate(listing, country);
+
+        await this.postTemplate(template, 1, expTime);
+
+        listings.splice(index, 1);
+      } catch (e) {
+        listing.validationError = e.body.error;
+
+        if (template) {
+          await this.removeTemplate(template.id);
+        }
+      }
+    }
+
+    return listings;
+  }
+
   static async validate(listings: ListingTemplate[], country?: string, expTime?: number) {
     for (const listing of listings) {
       listing.validationError = '';
@@ -48,24 +78,24 @@ export class ListingManager {
       }
 
       if (country && expTime) {
-        let templateId;
+        let template;
         try {
-          templateId = await this.createListingTemplate(listing, country);
+          template = await this.createListingTemplate(listing, country);
 
-          const templateSize = await this.sizeTemplate(templateId.id);
+          const templateSize = await this.sizeTemplate(template.id);
 
           if (!templateSize.fits) {
             listing.validationError = 'The listing is to big, please remove some text and/or images.';
           } else {
-            const feeEstimate = await this.postTemplate(templateId, 1, expTime, true);
+            const feeEstimate = await this.postTemplate(template, 1, expTime, true);
 
             listing.fee = +feeEstimate.fee;
           }
         } catch (e) {
           listing.validationError = e.body.error;
         } finally {
-          if (templateId) {
-            await this.removeTemplate(templateId.id);
+          if (template) {
+            await this.removeTemplate(template.id);
           }
         }
       }
@@ -97,43 +127,36 @@ export class ListingManager {
       throw e;
     }
 
-    const locationParams = [
-      'location',
-      'add',
-      template.id,
-      country,
-      'a'
-    ];
-
     try {
+      const locationParams = [
+        'location',
+        'add',
+        template.id,
+        country,
+        'a'
+      ];
+
+    
       await MarketRPC.call('template', locationParams);
-    } catch (e) {
-      await this.removeTemplate(template.id);
-      throw e;
-    }
+    
+      const escrowParams = [
+        'escrow',
+        'add',
+        template.id,
+        'MAD',
+        100,
+        100
+      ];
 
-    const escrowParams = [
-      'escrow',
-      'add',
-      template.id,
-      'MAD',
-      100,
-      100
-    ];
-
-    try {
       await MarketRPC.call('template', escrowParams);
+
+      await MarketRPC.uploadImages(template.id, listing.images);
+
     } catch (e) {
       await this.removeTemplate(template.id);
+      console.log(e)
       throw e;
     }
-
-    // try {
-    //   await MarketRPC.uploadImage(template.id, listing.images);
-    // } catch (e) {
-    //   await this.removeTemplate(template.id);
-    //   throw e;
-    // }
 
     return this.getTemplate(template.id);
   }

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "csvtojson": "^2.0.8",
+    "form-data": "^2.3.3",
     "got": "^9.6.0",
     "jimp": "^0.6.4"
   },

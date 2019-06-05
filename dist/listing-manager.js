@@ -39,9 +39,53 @@ var market_rpc_1 = require("./market-rpc");
 var ListingManager = /** @class */ (function () {
     function ListingManager() {
     }
+    ListingManager.publish = function (listings, country, expTime) {
+        return __awaiter(this, void 0, void 0, function () {
+            var index, listing, template, e_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        index = 0;
+                        _a.label = 1;
+                    case 1:
+                        if (!(index < listings.length)) return [3 /*break*/, 9];
+                        listing = listings[index];
+                        listing.validationError = '';
+                        if (!listing.publish) {
+                            return [3 /*break*/, 8];
+                        }
+                        template = void 0;
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 5, , 8]);
+                        return [4 /*yield*/, this.createListingTemplate(listing, country)];
+                    case 3:
+                        template = _a.sent();
+                        return [4 /*yield*/, this.postTemplate(template, 1, expTime)];
+                    case 4:
+                        _a.sent();
+                        listings.splice(index, 1);
+                        return [3 /*break*/, 8];
+                    case 5:
+                        e_1 = _a.sent();
+                        listing.validationError = e_1.body.error;
+                        if (!template) return [3 /*break*/, 7];
+                        return [4 /*yield*/, this.removeTemplate(template.id)];
+                    case 6:
+                        _a.sent();
+                        _a.label = 7;
+                    case 7: return [3 /*break*/, 8];
+                    case 8:
+                        index++;
+                        return [3 /*break*/, 1];
+                    case 9: return [2 /*return*/, listings];
+                }
+            });
+        });
+    };
     ListingManager.validate = function (listings, country, expTime) {
         return __awaiter(this, void 0, void 0, function () {
-            var _i, listings_1, listing, missing, templateId, templateSize, feeEstimate, e_1;
+            var _i, listings_1, listing, missing, template, templateSize, feeEstimate, e_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -82,32 +126,32 @@ var ListingManager = /** @class */ (function () {
                             return [3 /*break*/, 12];
                         }
                         if (!(country && expTime)) return [3 /*break*/, 12];
-                        templateId = void 0;
+                        template = void 0;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 8, 9, 12]);
                         return [4 /*yield*/, this.createListingTemplate(listing, country)];
                     case 3:
-                        templateId = _a.sent();
-                        return [4 /*yield*/, this.sizeTemplate(templateId.id)];
+                        template = _a.sent();
+                        return [4 /*yield*/, this.sizeTemplate(template.id)];
                     case 4:
                         templateSize = _a.sent();
                         if (!!templateSize.fits) return [3 /*break*/, 5];
                         listing.validationError = 'The listing is to big, please remove some text and/or images.';
                         return [3 /*break*/, 7];
-                    case 5: return [4 /*yield*/, this.postTemplate(templateId, 1, expTime, true)];
+                    case 5: return [4 /*yield*/, this.postTemplate(template, 1, expTime, true)];
                     case 6:
                         feeEstimate = _a.sent();
                         listing.fee = +feeEstimate.fee;
                         _a.label = 7;
                     case 7: return [3 /*break*/, 12];
                     case 8:
-                        e_1 = _a.sent();
-                        listing.validationError = e_1.body.error;
+                        e_2 = _a.sent();
+                        listing.validationError = e_2.body.error;
                         return [3 /*break*/, 12];
                     case 9:
-                        if (!templateId) return [3 /*break*/, 11];
-                        return [4 /*yield*/, this.removeTemplate(templateId.id)];
+                        if (!template) return [3 /*break*/, 11];
+                        return [4 /*yield*/, this.removeTemplate(template.id)];
                     case 10:
                         _a.sent();
                         _a.label = 11;
@@ -122,7 +166,7 @@ var ListingManager = /** @class */ (function () {
     };
     ListingManager.createListingTemplate = function (listing, country) {
         return __awaiter(this, void 0, void 0, function () {
-            var templateParams, template, e_2, locationParams, e_3, escrowParams, e_4;
+            var templateParams, template, e_3, locationParams, escrowParams, e_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -147,9 +191,10 @@ var ListingManager = /** @class */ (function () {
                         template = _a.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        e_2 = _a.sent();
-                        throw e_2;
+                        e_3 = _a.sent();
+                        throw e_3;
                     case 4:
+                        _a.trys.push([4, 8, , 10]);
                         locationParams = [
                             'location',
                             'add',
@@ -157,20 +202,9 @@ var ListingManager = /** @class */ (function () {
                             country,
                             'a'
                         ];
-                        _a.label = 5;
-                    case 5:
-                        _a.trys.push([5, 7, , 9]);
                         return [4 /*yield*/, market_rpc_1.MarketRPC.call('template', locationParams)];
-                    case 6:
+                    case 5:
                         _a.sent();
-                        return [3 /*break*/, 9];
-                    case 7:
-                        e_3 = _a.sent();
-                        return [4 /*yield*/, this.removeTemplate(template.id)];
-                    case 8:
-                        _a.sent();
-                        throw e_3;
-                    case 9:
                         escrowParams = [
                             'escrow',
                             'add',
@@ -179,27 +213,21 @@ var ListingManager = /** @class */ (function () {
                             100,
                             100
                         ];
-                        _a.label = 10;
-                    case 10:
-                        _a.trys.push([10, 12, , 14]);
                         return [4 /*yield*/, market_rpc_1.MarketRPC.call('template', escrowParams)];
-                    case 11:
+                    case 6:
                         _a.sent();
-                        return [3 /*break*/, 14];
-                    case 12:
+                        return [4 /*yield*/, market_rpc_1.MarketRPC.uploadImages(template.id, listing.images)];
+                    case 7:
+                        _a.sent();
+                        return [3 /*break*/, 10];
+                    case 8:
                         e_4 = _a.sent();
                         return [4 /*yield*/, this.removeTemplate(template.id)];
-                    case 13:
+                    case 9:
                         _a.sent();
+                        console.log(e_4);
                         throw e_4;
-                    case 14: 
-                    // try {
-                    //   await MarketRPC.uploadImage(template.id, listing.images);
-                    // } catch (e) {
-                    //   await this.removeTemplate(template.id);
-                    //   throw e;
-                    // }
-                    return [2 /*return*/, this.getTemplate(template.id)];
+                    case 10: return [2 /*return*/, this.getTemplate(template.id)];
                 }
             });
         });

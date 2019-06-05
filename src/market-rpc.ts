@@ -1,8 +1,5 @@
-// import { Observable, from } from 'rxjs';
-// import { map } from 'rxjs/operators';
-
-// const req = require('request');
 const got = require('got');
+const FormData = require('form-data');
 
 export class MarketRPC {
 
@@ -19,10 +16,35 @@ export class MarketRPC {
           auth: 'test:test',
           method: 'POST',
           json: true,
-          body:postData
+          body: postData
         })
         .then((res: any) => resolve(res.body.result))
         .catch((e: any) => reject(e));
+    });
+  }
+
+  static uploadImages(templateId: number, base64DataURIArray: any[]) {
+    return new Promise((resolve, reject) => {
+
+      const form = new FormData();
+
+      for (let idx = 0; idx < base64DataURIArray.length; idx++) {
+        form.append(
+          `image-${idx}`,
+          Buffer.from(base64DataURIArray[idx].split(',')[1], 'base64'),
+          {
+            filename: 'image.jpg',
+            contentType: 'image/jpeg'
+          });
+      }
+
+      return got(`http://localhost:3000/api/item-images/template/${templateId}`, {
+            auth: 'test:test',
+            method: 'POST',
+            body: form
+          })
+          .then((res: any) => resolve(res.body.result))
+          .catch((e: any) => reject(e));
     });
   }
 }
