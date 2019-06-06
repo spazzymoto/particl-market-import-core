@@ -51,15 +51,16 @@ export class ListingManager {
 
       for (const listing of listings) {
         
+        if (!listing.publish) {
+          continue;
+        }
+
+        listing.validationError = '';
+
         if (country && expTime) {
           observer.next({status: `Hang on, we are busy estimating the fee for listing ${currentListing++}/${listingsToProcess}`});
         } else {
           observer.next({status: `Hang on, we are busy validating listing ${currentListing++}/${listingsToProcess}`});
-        }
-        listing.validationError = '';
-
-        if (!listing.publish) {
-          continue;
         }
 
         let missing = '';

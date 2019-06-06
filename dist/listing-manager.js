@@ -113,15 +113,15 @@ var ListingManager = /** @class */ (function () {
                     case 1:
                         if (!(_i < listings_2.length)) return [3 /*break*/, 13];
                         listing = listings_2[_i];
+                        if (!listing.publish) {
+                            return [3 /*break*/, 12];
+                        }
+                        listing.validationError = '';
                         if (country && expTime) {
                             observer.next({ status: "Hang on, we are busy estimating the fee for listing " + currentListing++ + "/" + listingsToProcess });
                         }
                         else {
                             observer.next({ status: "Hang on, we are busy validating listing " + currentListing++ + "/" + listingsToProcess });
-                        }
-                        listing.validationError = '';
-                        if (!listing.publish) {
-                            return [3 /*break*/, 12];
                         }
                         missing = '';
                         if (!listing.title.trim()) {
