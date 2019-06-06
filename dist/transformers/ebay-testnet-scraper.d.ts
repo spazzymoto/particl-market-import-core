@@ -1,8 +1,8 @@
-import { ListingTemplate, Import } from '../interfaces';
+import { Import } from '../interfaces';
 export declare class EbayTestnetScraper implements Import {
     private BASE_PRICES;
     private BASE_SHIPPING_PRICES;
-    load(params: any): Promise<ListingTemplate[]>;
+    load(params: any): any;
     private sleep;
     getImportParams(): {
         id: string;

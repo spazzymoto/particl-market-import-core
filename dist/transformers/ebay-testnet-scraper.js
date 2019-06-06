@@ -43,6 +43,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
+var rxjs_1 = require("rxjs");
 var _ = __importStar(require("lodash"));
 var got = require('got');
 var cheerio = require('cheerio');
@@ -52,7 +53,8 @@ var EbayTestnetScraper = /** @class */ (function () {
         this.BASE_SHIPPING_PRICES = [0.2, 0.4];
     }
     EbayTestnetScraper.prototype.load = function (params) {
-        return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
+        return rxjs_1.Observable.create(function (observer) { return __awaiter(_this, void 0, void 0, function () {
             var url, listings, category, errorCount, _loop_1, this_1, state_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -108,6 +110,7 @@ var EbayTestnetScraper = /** @class */ (function () {
                                         _b.apply(_a, [(_c.images = _d.sent(),
                                                 _c.publish = true,
                                                 _c)]);
+                                        observer.next({ status: "importing " + listings.length + "/" + params.listings_to_scrape });
                                         _d.label = 6;
                                     case 6:
                                         nextLinks = $('.mfe-reco-link');
@@ -123,7 +126,7 @@ var EbayTestnetScraper = /** @class */ (function () {
                                             url = $(nextLinks[Math.floor(Math.random() * nextLinks.length)]).attr('href');
                                         }
                                         // Lets scrape responsibly
-                                        return [4 /*yield*/, this_1.sleep(1000)];
+                                        return [4 /*yield*/, this_1.sleep(500)];
                                     case 9:
                                         // Lets scrape responsibly
                                         _d.sent();
@@ -141,10 +144,13 @@ var EbayTestnetScraper = /** @class */ (function () {
                         if (state_1 === "break")
                             return [3 /*break*/, 4];
                         return [3 /*break*/, 2];
-                    case 4: return [2 /*return*/, listings];
+                    case 4:
+                        observer.next({ result: listings });
+                        observer.complete();
+                        return [2 /*return*/];
                 }
             });
-        });
+        }); });
     };
     EbayTestnetScraper.prototype.sleep = function (ms) {
         return new Promise(function (resolve) { return setTimeout(resolve, ms); });
