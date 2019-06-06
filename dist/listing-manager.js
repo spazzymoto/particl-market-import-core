@@ -36,11 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var market_rpc_1 = require("./market-rpc");
+var rxjs_1 = require("rxjs");
 var ListingManager = /** @class */ (function () {
     function ListingManager() {
     }
     ListingManager.publish = function (listings, country, expTime) {
-        return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
+        return rxjs_1.Observable.create(function (observer) { return __awaiter(_this, void 0, void 0, function () {
             var index, listing, template, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -50,6 +52,7 @@ var ListingManager = /** @class */ (function () {
                     case 1:
                         if (!(index < listings.length)) return [3 /*break*/, 9];
                         listing = listings[index];
+                        observer.next({ status: "Hang on, we are busy publishing listing " + (index + 1) + "/" + listings.length });
                         listing.validationError = '';
                         if (!listing.publish) {
                             return [3 /*break*/, 8];
@@ -78,22 +81,32 @@ var ListingManager = /** @class */ (function () {
                     case 8:
                         index++;
                         return [3 /*break*/, 1];
-                    case 9: return [2 /*return*/, listings];
+                    case 9:
+                        observer.next({ result: listings });
+                        observer.complete();
+                        return [2 /*return*/];
                 }
             });
-        });
+        }); });
     };
     ListingManager.validate = function (listings, country, expTime) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _i, listings_1, listing, missing, template, templateSize, feeEstimate, e_2;
+        var _this = this;
+        return rxjs_1.Observable.create(function (observer) { return __awaiter(_this, void 0, void 0, function () {
+            var index, listing, missing, template, templateSize, feeEstimate, e_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _i = 0, listings_1 = listings;
+                        index = 0;
                         _a.label = 1;
                     case 1:
-                        if (!(_i < listings_1.length)) return [3 /*break*/, 13];
-                        listing = listings_1[_i];
+                        if (!(index < listings.length)) return [3 /*break*/, 13];
+                        listing = listings[index];
+                        if (country && expTime) {
+                            observer.next({ status: "Hang on, we are busy validating listing " + (index + 1) + "/" + listings.length });
+                        }
+                        else {
+                            observer.next({ status: "Hang on, we are busy estimating the fee for listing " + (index + 1) + "/" + listings.length });
+                        }
                         listing.validationError = '';
                         if (!listing.publish) {
                             return [3 /*break*/, 12];
@@ -157,12 +170,15 @@ var ListingManager = /** @class */ (function () {
                         _a.label = 11;
                     case 11: return [7 /*endfinally*/];
                     case 12:
-                        _i++;
+                        index++;
                         return [3 /*break*/, 1];
-                    case 13: return [2 /*return*/, listings];
+                    case 13:
+                        observer.next({ result: listings });
+                        observer.complete();
+                        return [2 /*return*/];
                 }
             });
-        });
+        }); });
     };
     ListingManager.createListingTemplate = function (listing, country) {
         return __awaiter(this, void 0, void 0, function () {

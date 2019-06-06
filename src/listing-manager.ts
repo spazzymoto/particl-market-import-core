@@ -1,108 +1,125 @@
 import { ListingTemplate } from "./interfaces";
 import { MarketRPC } from "./market-rpc";
+import { Observable } from "rxjs";
 
 export class ListingManager {
 
-  static async publish(listings: ListingTemplate[], country: string, expTime: number) {
+  static publish(listings: ListingTemplate[], country: string, expTime: number): Observable<any> {
+    return Observable.create(async (observer: any) => {
+    
+      for (let index = 0; index < listings.length; index++) {
+        const listing = listings[index];
+        
+        observer.next({status: `Hang on, we are busy publishing listing ${index + 1}/${listings.length}`});
 
-    for (let index = 0; index < listings.length; index++) {
-      const listing = listings[index];
+        listing.validationError = '';
 
-      listing.validationError = '';
-
-      if (!listing.publish) {
-        continue
-      }
-
-      let template;
-      try {
-        template = await this.createListingTemplate(listing, country);
-
-        await this.postTemplate(template, 1, expTime);
-
-        listing.id = template.id;
-      } catch (e) {
-        listing.validationError = e.body.error;
-
-        if (template) {
-          await this.removeTemplate(template.id);
+        if (!listing.publish) {
+          continue
         }
-      }
-    }
 
-    return listings;
-  }
-
-  static async validate(listings: ListingTemplate[], country?: string, expTime?: number) {
-    for (const listing of listings) {
-      listing.validationError = '';
-
-      if (!listing.publish) {
-        continue;
-      }
-
-      let missing = '';
-
-      if (!listing.title.trim()) {
-        missing += 'title, '
-      }
-
-      if (!listing.shortDescription.trim()) {
-        missing += 'short description, '
-      }
-
-      if (!listing.longDescription.trim()) {
-        missing += 'long description, '
-      }
-
-      if (!(listing.basePrice > 0)) {
-        missing += 'price per item, '
-      }
-
-      if (!(listing.domesticShippingPrice > 0)) {
-        missing += 'domestic shipping price, '
-      }
-
-      if (!(listing.internationalShippingPrice > 0)) {
-        missing += 'international shipping price, '
-      }
-
-      if (!listing.category) {
-        missing += 'category, '
-      }
-
-      if (missing) {
-        missing = missing.substring(0, missing.length-2);
-        listing.validationError = `The following fields are missing ${missing}. Please correct these before publishing.`;
-        continue;
-      }
-
-      if (country && expTime) {
         let template;
         try {
           template = await this.createListingTemplate(listing, country);
 
-          const templateSize = await this.sizeTemplate(template.id);
+          await this.postTemplate(template, 1, expTime);
 
-          if (!templateSize.fits) {
-            listing.validationError = 'The listing is to big, please remove some text and/or images.';
-          } else {
-            const feeEstimate = await this.postTemplate(template, 1, expTime, true);
-
-            listing.fee = +feeEstimate.fee;
-          }
+          listing.id = template.id;
         } catch (e) {
           listing.validationError = e.body.error;
-        } finally {
+
           if (template) {
             await this.removeTemplate(template.id);
           }
         }
       }
-      
-    }
 
-    return listings;
+      observer.next({result: listings});
+			observer.complete();
+    });
+  }
+
+  static validate(listings: ListingTemplate[], country?: string, expTime?: number): Observable<any> {
+    return Observable.create(async (observer: any) => {
+    
+      for (let index = 0; index < listings.length; index++) {
+        const listing = listings[index];
+        
+        if (country && expTime) {
+          observer.next({status: `Hang on, we are busy validating listing ${index + 1}/${listings.length}`});
+        } else {
+          observer.next({status: `Hang on, we are busy estimating the fee for listing ${index + 1}/${listings.length}`});
+        }
+        listing.validationError = '';
+
+        if (!listing.publish) {
+          continue;
+        }
+
+        let missing = '';
+
+        if (!listing.title.trim()) {
+          missing += 'title, '
+        }
+
+        if (!listing.shortDescription.trim()) {
+          missing += 'short description, '
+        }
+
+        if (!listing.longDescription.trim()) {
+          missing += 'long description, '
+        }
+
+        if (!(listing.basePrice > 0)) {
+          missing += 'price per item, '
+        }
+
+        if (!(listing.domesticShippingPrice > 0)) {
+          missing += 'domestic shipping price, '
+        }
+
+        if (!(listing.internationalShippingPrice > 0)) {
+          missing += 'international shipping price, '
+        }
+
+        if (!listing.category) {
+          missing += 'category, '
+        }
+
+        if (missing) {
+          missing = missing.substring(0, missing.length-2);
+          listing.validationError = `The following fields are missing ${missing}. Please correct these before publishing.`;
+          continue;
+        }
+
+        if (country && expTime) {
+          let template;
+          try {
+            template = await this.createListingTemplate(listing, country);
+
+            const templateSize = await this.sizeTemplate(template.id);
+
+            if (!templateSize.fits) {
+              listing.validationError = 'The listing is to big, please remove some text and/or images.';
+            } else {
+              const feeEstimate = await this.postTemplate(template, 1, expTime, true);
+
+              listing.fee = +feeEstimate.fee;
+            }
+          } catch (e) {
+            listing.validationError = e.body.error;
+          } finally {
+            if (template) {
+              await this.removeTemplate(template.id);
+            }
+          }
+        }
+        
+      }
+
+      observer.next({result: listings});
+			observer.complete();
+    });
   }
 
   private static async createListingTemplate(listing: ListingTemplate, country: string) {

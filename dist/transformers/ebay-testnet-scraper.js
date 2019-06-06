@@ -95,7 +95,7 @@ var EbayTestnetScraper = /** @class */ (function () {
                                         nextLinks = void 0;
                                         if (!productTitle) return [3 /*break*/, 7];
                                         if (!!_.find(listings, function (l) { return l.title === productTitle; })) return [3 /*break*/, 6];
-                                        observer.next({ status: "Hang on, we are busy scraping item " + (listings.length + 1) + "/" + params.listings_to_scrape });
+                                        observer.next({ status: "Hang on, we are busy scraping listing " + (listings.length + 1) + "/" + params.listings_to_scrape });
                                         _b = (_a = listings).push;
                                         _c = {
                                             title: productTitle,

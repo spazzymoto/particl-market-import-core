@@ -73,7 +73,7 @@ var BaseCSV = /** @class */ (function () {
                     case 3:
                         if (!(_i < csvData_1.length)) return [3 /*break*/, 12];
                         item = csvData_1[_i];
-                        observer.next({ status: "Hang on, we are busy importing item " + (listings.length + 1) + "/" + csvData.length });
+                        observer.next({ status: "Hang on, we are busy importing listing " + (listings.length + 1) + "/" + csvData.length });
                         transformed = {};
                         _a = [];
                         for (_b in this.importMapping)

@@ -29,7 +29,7 @@ export abstract class BaseCSV {
       }
 
       for (const item of csvData) {
-        observer.next({status: `Hang on, we are busy importing item ${listings.length + 1}/${csvData.length}`});
+        observer.next({status: `Hang on, we are busy importing listing ${listings.length + 1}/${csvData.length}`});
         const transformed: any = {};
         for (const key in this.importMapping) {
           let mappedKey;
