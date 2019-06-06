@@ -11,7 +11,7 @@ export class EbayTestnetScraper implements Import {
 	private BASE_PRICES = [0.5, 1, 1.5, 2];
 	private BASE_SHIPPING_PRICES = [0.2, 0.4];
 	
-	load(params: any) {
+	load(params: any): Observable<any> {
 		return Observable.create(async (observer: any) => {
 
 			params.listings_to_scrape = params.listings_to_scrape || 10;

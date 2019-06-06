@@ -40,11 +40,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var csvtojson_1 = __importDefault(require("csvtojson"));
 var fs_1 = __importDefault(require("fs"));
+var rxjs_1 = require("rxjs");
 var BaseCSV = /** @class */ (function () {
     function BaseCSV() {
     }
     BaseCSV.prototype.load = function (params) {
-        return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
+        return rxjs_1.Observable.create(function (observer) { return __awaiter(_this, void 0, void 0, function () {
             var listings, text, csvData, _i, csvData_1, item, transformed, _a, _b, _c, key, mappedKey, transformFunction, _d, _e, _f;
             return __generator(this, function (_g) {
                 switch (_g.label) {
@@ -64,7 +66,7 @@ var BaseCSV = /** @class */ (function () {
                             this.checkImportMapping(csvData);
                         }
                         catch (e) {
-                            throw e;
+                            observer.error(e.message);
                         }
                         _i = 0, csvData_1 = csvData;
                         _g.label = 3;
@@ -114,14 +116,18 @@ var BaseCSV = /** @class */ (function () {
                     case 10:
                         transformed.publish = true;
                         listings.push(transformed);
+                        observer.next({ status: "Hang on, we are busy importing item " + listings.length + "/" + csvData.length });
                         _g.label = 11;
                     case 11:
                         _i++;
                         return [3 /*break*/, 3];
-                    case 12: return [2 /*return*/, listings];
+                    case 12:
+                        observer.next({ result: listings });
+                        observer.complete();
+                        return [2 /*return*/];
                 }
             });
-        });
+        }); });
     };
     BaseCSV.prototype.checkImportMapping = function (data) {
         var testData = data[0];

@@ -2,61 +2,67 @@ import { ListingTemplate } from '../interfaces';
 
 import csv from 'csvtojson';
 import fs from 'fs';
+import { Observable } from 'rxjs';
 
 export abstract class BaseCSV {
 
   protected importParams: any;
 
-	async load(params: any) {
-    this.importParams = params;
+	load(params: any): Observable<any> {
+    return Observable.create(async (observer: any) => {
 
-		const listings: ListingTemplate[] = [];
+      this.importParams = params;
 
-		const text = await fs.readFileSync(params.file, "utf8");
-		const csvData = await csv().fromString(text);
+      const listings: ListingTemplate[] = [];
 
-		if (csvData.length === 0) {
-			return listings;
-		}
+      const text = await fs.readFileSync(params.file, "utf8");
+      const csvData = await csv().fromString(text);
 
-    try {
-      this.checkImportMapping(csvData);
-    } catch (e) {
-      throw e;
-    }
-
-    for (const item of csvData) {
-      const transformed: any = {};
-      for (const key in this.importMapping) {
-        let mappedKey;
-        let transformFunction;
-
-        switch (typeof this.importMapping[key]) {
-          case 'string': 
-            mappedKey = this.importMapping[key];
-            break;
-          
-          case 'object':
-            mappedKey = this.importMapping[key].field;
-            transformFunction = this.importMapping[key].translate
-            break;
-
-        }
-        
-        if (mappedKey) {
-          transformed[key] = transformFunction ? await transformFunction(item[mappedKey]) : item[mappedKey];
-        } else {
-          transformed[key] = undefined;
-        }
-        
+      if (csvData.length === 0) {
+        return listings;
       }
-      transformed.publish = true;
 
-      listings.push(<ListingTemplate>transformed);
-    }
-		
+      try {
+        this.checkImportMapping(csvData);
+      } catch (e) {
+        observer.error(e.message);
+      }
 
-		return listings;
+      for (const item of csvData) {
+        const transformed: any = {};
+        for (const key in this.importMapping) {
+          let mappedKey;
+          let transformFunction;
+
+          switch (typeof this.importMapping[key]) {
+            case 'string': 
+              mappedKey = this.importMapping[key];
+              break;
+            
+            case 'object':
+              mappedKey = this.importMapping[key].field;
+              transformFunction = this.importMapping[key].translate
+              break;
+
+          }
+          
+          if (mappedKey) {
+            transformed[key] = transformFunction ? await transformFunction(item[mappedKey]) : item[mappedKey];
+          } else {
+            transformed[key] = undefined;
+          }
+          
+        }
+        transformed.publish = true;
+
+        listings.push(<ListingTemplate>transformed);
+
+        observer.next({status: `Hang on, we are busy importing item ${listings.length}/${csvData.length}`});
+      }
+      
+      observer.next({result: listings});
+			observer.complete();
+    });
 	}
 
 	private checkImportMapping(data: any[]) {

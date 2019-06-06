@@ -1,5 +1,7 @@
+import { Observable } from "rxjs";
+
 export interface Import {
-  load(params: any): Promise<ListingTemplate[]>;
+  load(params: any): Observable<any>;
   getImportParams(): any;
 }
 
