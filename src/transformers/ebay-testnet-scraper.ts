@@ -1,6 +1,8 @@
 import { ListingTemplate, Import } from '../interfaces';
 import { Utils } from '../utils';
 
+import * as _ from 'lodash';
+
 const got = require('got');
 const cheerio = require('cheerio');
 
@@ -41,17 +43,19 @@ export class EbayTestnetScraper implements Import {
 
 			let nextLinks;
 			if (productTitle) {
-				listings.push(<ListingTemplate>{
-					title: productTitle,
-					shortDescription: 'Created on ' + new Date().toString(),
-					longDescription: productDesc ? productDesc.replace(/  /g, '').replace(/\t/g, '').replace(/\n/g, '') : productTitle,
-					category: category,
-					basePrice: this.BASE_PRICES[Math.floor(Math.random() * this.BASE_PRICES.length)],
-					domesticShippingPrice: this.BASE_SHIPPING_PRICES[Math.floor(Math.random() * this.BASE_SHIPPING_PRICES.length)],
-					internationalShippingPrice: this.BASE_SHIPPING_PRICES[Math.floor(Math.random() * this.BASE_SHIPPING_PRICES.length)] * 2,
-					images: await Utils.getImagesFromList(image),
-					publish: true
-				});
+				if (!_.find(listings, l => l.title === productTitle)) {
+					listings.push(<ListingTemplate>{
+						title: productTitle,
+						shortDescription: 'Created on ' + new Date().toString(),
+						longDescription: productDesc ? productDesc.replace(/  /g, '').replace(/\t/g, '').replace(/\n/g, '') : productTitle,
+						category: category,
+						basePrice: this.BASE_PRICES[Math.floor(Math.random() * this.BASE_PRICES.length)],
+						domesticShippingPrice: this.BASE_SHIPPING_PRICES[Math.floor(Math.random() * this.BASE_SHIPPING_PRICES.length)],
+						internationalShippingPrice: this.BASE_SHIPPING_PRICES[Math.floor(Math.random() * this.BASE_SHIPPING_PRICES.length)] * 2,
+						images: await Utils.getImagesFromList(image),
+						publish: true
+					});
+				}
 
 				nextLinks = $('.mfe-reco-link');
 			} else {

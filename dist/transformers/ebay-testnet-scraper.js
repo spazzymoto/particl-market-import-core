@@ -34,8 +34,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
+var _ = __importStar(require("lodash"));
 var got = require('got');
 var cheerio = require('cheerio');
 var EbayTestnetScraper = /** @class */ (function () {
@@ -45,77 +53,95 @@ var EbayTestnetScraper = /** @class */ (function () {
     }
     EbayTestnetScraper.prototype.load = function (params) {
         return __awaiter(this, void 0, void 0, function () {
-            var url, listings, category, errorCount, response, e_1, $, productTitle, productDesc, image, nextLinks, _a, _b, _c;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var url, listings, category, errorCount, _loop_1, this_1, state_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         params.listings_to_scrape = params.listings_to_scrape || 10;
                         url = 'https://ebay.com';
                         listings = [];
                         return [4 /*yield*/, utils_1.Utils.searchCategories('Other')];
                     case 1:
-                        category = _d.sent();
+                        category = _a.sent();
                         errorCount = 0;
-                        _d.label = 2;
-                    case 2:
-                        if (!(listings.length < params.listings_to_scrape)) return [3 /*break*/, 11];
-                        response = void 0;
-                        _d.label = 3;
-                    case 3:
-                        _d.trys.push([3, 5, , 6]);
-                        return [4 /*yield*/, got(url)];
-                    case 4:
-                        response = _d.sent();
-                        return [3 /*break*/, 6];
-                    case 5:
-                        e_1 = _d.sent();
-                        if (errorCount > 10) {
-                            return [3 /*break*/, 11];
-                        }
-                        errorCount++;
-                        return [3 /*break*/, 2];
-                    case 6:
-                        errorCount = 0;
-                        $ = cheerio.load(response.body);
-                        productTitle = $('#itemTitle').text().replace('Details about', '').trim();
-                        productDesc = $('#viTabs_0_is table').text().trim();
-                        image = $('#icImg').attr('src');
-                        nextLinks = void 0;
-                        if (!productTitle) return [3 /*break*/, 8];
-                        _b = (_a = listings).push;
-                        _c = {
-                            title: productTitle,
-                            shortDescription: 'Created on ' + new Date().toString(),
-                            longDescription: productDesc ? productDesc.replace(/  /g, '').replace(/\t/g, '').replace(/\n/g, '') : productTitle,
-                            category: category,
-                            basePrice: this.BASE_PRICES[Math.floor(Math.random() * this.BASE_PRICES.length)],
-                            domesticShippingPrice: this.BASE_SHIPPING_PRICES[Math.floor(Math.random() * this.BASE_SHIPPING_PRICES.length)],
-                            internationalShippingPrice: this.BASE_SHIPPING_PRICES[Math.floor(Math.random() * this.BASE_SHIPPING_PRICES.length)] * 2
+                        _loop_1 = function () {
+                            var response, e_1, $, productTitle, productDesc, image, nextLinks, _a, _b, _c;
+                            return __generator(this, function (_d) {
+                                switch (_d.label) {
+                                    case 0:
+                                        response = void 0;
+                                        _d.label = 1;
+                                    case 1:
+                                        _d.trys.push([1, 3, , 4]);
+                                        return [4 /*yield*/, got(url)];
+                                    case 2:
+                                        response = _d.sent();
+                                        return [3 /*break*/, 4];
+                                    case 3:
+                                        e_1 = _d.sent();
+                                        if (errorCount > 10) {
+                                            return [2 /*return*/, "break"];
+                                        }
+                                        errorCount++;
+                                        return [2 /*return*/, "continue"];
+                                    case 4:
+                                        errorCount = 0;
+                                        $ = cheerio.load(response.body);
+                                        productTitle = $('#itemTitle').text().replace('Details about', '').trim();
+                                        productDesc = $('#viTabs_0_is table').text().trim();
+                                        image = $('#icImg').attr('src');
+                                        nextLinks = void 0;
+                                        if (!productTitle) return [3 /*break*/, 7];
+                                        if (!!_.find(listings, function (l) { return l.title === productTitle; })) return [3 /*break*/, 6];
+                                        _b = (_a = listings).push;
+                                        _c = {
+                                            title: productTitle,
+                                            shortDescription: 'Created on ' + new Date().toString(),
+                                            longDescription: productDesc ? productDesc.replace(/  /g, '').replace(/\t/g, '').replace(/\n/g, '') : productTitle,
+                                            category: category,
+                                            basePrice: this_1.BASE_PRICES[Math.floor(Math.random() * this_1.BASE_PRICES.length)],
+                                            domesticShippingPrice: this_1.BASE_SHIPPING_PRICES[Math.floor(Math.random() * this_1.BASE_SHIPPING_PRICES.length)],
+                                            internationalShippingPrice: this_1.BASE_SHIPPING_PRICES[Math.floor(Math.random() * this_1.BASE_SHIPPING_PRICES.length)] * 2
+                                        };
+                                        return [4 /*yield*/, utils_1.Utils.getImagesFromList(image)];
+                                    case 5:
+                                        _b.apply(_a, [(_c.images = _d.sent(),
+                                                _c.publish = true,
+                                                _c)]);
+                                        _d.label = 6;
+                                    case 6:
+                                        nextLinks = $('.mfe-reco-link');
+                                        return [3 /*break*/, 8];
+                                    case 7:
+                                        nextLinks = $('.hl-item__link');
+                                        _d.label = 8;
+                                    case 8:
+                                        if (nextLinks.length === 0) {
+                                            url = 'https://ebay.com';
+                                        }
+                                        else {
+                                            url = $(nextLinks[Math.floor(Math.random() * nextLinks.length)]).attr('href');
+                                        }
+                                        // Lets scrape responsibly
+                                        return [4 /*yield*/, this_1.sleep(1000)];
+                                    case 9:
+                                        // Lets scrape responsibly
+                                        _d.sent();
+                                        return [2 /*return*/];
+                                }
+                            });
                         };
-                        return [4 /*yield*/, utils_1.Utils.getImagesFromList(image)];
-                    case 7:
-                        _b.apply(_a, [(_c.images = _d.sent(),
-                                _c.publish = true,
-                                _c)]);
-                        nextLinks = $('.mfe-reco-link');
-                        return [3 /*break*/, 9];
-                    case 8:
-                        nextLinks = $('.hl-item__link');
-                        _d.label = 9;
-                    case 9:
-                        if (nextLinks.length === 0) {
-                            url = 'https://ebay.com';
-                        }
-                        else {
-                            url = $(nextLinks[Math.floor(Math.random() * nextLinks.length)]).attr('href');
-                        }
-                        // Lets scrape responsibly
-                        return [4 /*yield*/, this.sleep(1000)];
-                    case 10:
-                        // Lets scrape responsibly
-                        _d.sent();
+                        this_1 = this;
+                        _a.label = 2;
+                    case 2:
+                        if (!(listings.length < params.listings_to_scrape)) return [3 /*break*/, 4];
+                        return [5 /*yield**/, _loop_1()];
+                    case 3:
+                        state_1 = _a.sent();
+                        if (state_1 === "break")
+                            return [3 /*break*/, 4];
                         return [3 /*break*/, 2];
-                    case 11: return [2 /*return*/, listings];
+                    case 4: return [2 /*return*/, listings];
                 }
             });
         });
