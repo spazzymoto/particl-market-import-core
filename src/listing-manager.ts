@@ -46,9 +46,9 @@ export class ListingManager {
         const listing = listings[index];
         
         if (country && expTime) {
-          observer.next({status: `Hang on, we are busy validating listing ${index + 1}/${listings.length}`});
-        } else {
           observer.next({status: `Hang on, we are busy estimating the fee for listing ${index + 1}/${listings.length}`});
+        } else {
+          observer.next({status: `Hang on, we are busy validating listing ${index + 1}/${listings.length}`});
         }
         listing.validationError = '';
 

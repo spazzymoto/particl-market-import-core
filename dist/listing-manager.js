@@ -102,10 +102,10 @@ var ListingManager = /** @class */ (function () {
                         if (!(index < listings.length)) return [3 /*break*/, 13];
                         listing = listings[index];
                         if (country && expTime) {
-                            observer.next({ status: "Hang on, we are busy validating listing " + (index + 1) + "/" + listings.length });
+                            observer.next({ status: "Hang on, we are busy estimating the fee for listing " + (index + 1) + "/" + listings.length });
                         }
                         else {
-                            observer.next({ status: "Hang on, we are busy estimating the fee for listing " + (index + 1) + "/" + listings.length });
+                            observer.next({ status: "Hang on, we are busy validating listing " + (index + 1) + "/" + listings.length });
                         }
                         listing.validationError = '';
                         if (!listing.publish) {
