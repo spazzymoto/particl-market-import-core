@@ -20,9 +20,8 @@ export class ListingManager {
 
         await this.postTemplate(template, 1, expTime);
 
-        listings.splice(index, 1);
+        listing.id = template.id;
       } catch (e) {
-        console.log('################### ERROR', e);
         listing.validationError = e.body.error;
 
         if (template) {

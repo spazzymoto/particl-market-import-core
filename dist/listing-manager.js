@@ -64,11 +64,10 @@ var ListingManager = /** @class */ (function () {
                         return [4 /*yield*/, this.postTemplate(template, 1, expTime)];
                     case 4:
                         _a.sent();
-                        listings.splice(index, 1);
+                        listing.id = template.id;
                         return [3 /*break*/, 8];
                     case 5:
                         e_1 = _a.sent();
-                        console.log('################### ERROR', e_1);
                         listing.validationError = e_1.body.error;
                         if (!template) return [3 /*break*/, 7];
                         return [4 /*yield*/, this.removeTemplate(template.id)];

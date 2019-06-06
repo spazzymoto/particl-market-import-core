@@ -7,6 +7,7 @@ export interface Category {
     name: string;
 }
 export interface ListingTemplate {
+    id: string;
     title: string;
     shortDescription: string;
     longDescription: string;
