@@ -34,29 +34,39 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var market_rpc_1 = require("./market-rpc");
 var rxjs_1 = require("rxjs");
+var _ = __importStar(require("lodash"));
 var ListingManager = /** @class */ (function () {
     function ListingManager() {
     }
     ListingManager.publish = function (listings, country, expTime) {
         var _this = this;
         return rxjs_1.Observable.create(function (observer) { return __awaiter(_this, void 0, void 0, function () {
-            var index, listing, template, e_1;
+            var listingsToProcess, currentListing, _i, listings_1, listing, template, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        index = 0;
+                        listingsToProcess = _.chain(listings).filter(function (l) { return l.publish; }).size().value();
+                        currentListing = 1;
+                        _i = 0, listings_1 = listings;
                         _a.label = 1;
                     case 1:
-                        if (!(index < listings.length)) return [3 /*break*/, 9];
-                        listing = listings[index];
-                        observer.next({ status: "Hang on, we are busy publishing listing " + (index + 1) + "/" + listings.length });
-                        listing.validationError = '';
+                        if (!(_i < listings_1.length)) return [3 /*break*/, 9];
+                        listing = listings_1[_i];
                         if (!listing.publish) {
                             return [3 /*break*/, 8];
                         }
+                        listing.validationError = '';
+                        observer.next({ status: "Hang on, we are busy publishing listing " + currentListing++ + "/" + listingsToProcess });
                         template = void 0;
                         _a.label = 2;
                     case 2:
@@ -79,7 +89,7 @@ var ListingManager = /** @class */ (function () {
                         _a.label = 7;
                     case 7: return [3 /*break*/, 8];
                     case 8:
-                        index++;
+                        _i++;
                         return [3 /*break*/, 1];
                     case 9:
                         observer.next({ result: listings });
@@ -92,20 +102,22 @@ var ListingManager = /** @class */ (function () {
     ListingManager.validate = function (listings, country, expTime) {
         var _this = this;
         return rxjs_1.Observable.create(function (observer) { return __awaiter(_this, void 0, void 0, function () {
-            var index, listing, missing, template, templateSize, feeEstimate, e_2;
+            var listingsToProcess, currentListing, _i, listings_2, listing, missing, template, templateSize, feeEstimate, e_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        index = 0;
+                        listingsToProcess = _.chain(listings).filter(function (l) { return l.publish; }).size().value();
+                        currentListing = 1;
+                        _i = 0, listings_2 = listings;
                         _a.label = 1;
                     case 1:
-                        if (!(index < listings.length)) return [3 /*break*/, 13];
-                        listing = listings[index];
+                        if (!(_i < listings_2.length)) return [3 /*break*/, 13];
+                        listing = listings_2[_i];
                         if (country && expTime) {
-                            observer.next({ status: "Hang on, we are busy estimating the fee for listing " + (index + 1) + "/" + listings.length });
+                            observer.next({ status: "Hang on, we are busy estimating the fee for listing " + currentListing++ + "/" + listingsToProcess });
                         }
                         else {
-                            observer.next({ status: "Hang on, we are busy validating listing " + (index + 1) + "/" + listings.length });
+                            observer.next({ status: "Hang on, we are busy validating listing " + currentListing++ + "/" + listingsToProcess });
                         }
                         listing.validationError = '';
                         if (!listing.publish) {
@@ -170,7 +182,7 @@ var ListingManager = /** @class */ (function () {
                         _a.label = 11;
                     case 11: return [7 /*endfinally*/];
                     case 12:
-                        index++;
+                        _i++;
                         return [3 /*break*/, 1];
                     case 13:
                         observer.next({ result: listings });

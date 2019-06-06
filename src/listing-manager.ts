@@ -2,21 +2,25 @@ import { ListingTemplate } from "./interfaces";
 import { MarketRPC } from "./market-rpc";
 import { Observable } from "rxjs";
 
+import * as _ from 'lodash';
+
 export class ListingManager {
 
   static publish(listings: ListingTemplate[], country: string, expTime: number): Observable<any> {
     return Observable.create(async (observer: any) => {
     
-      for (let index = 0; index < listings.length; index++) {
-        const listing = listings[index];
+      const listingsToProcess = _.chain(listings).filter(l => l.publish).size().value();
+      let currentListing = 1;
+
+      for (const listing of listings) {
         
-        observer.next({status: `Hang on, we are busy publishing listing ${index + 1}/${listings.length}`});
-
-        listing.validationError = '';
-
         if (!listing.publish) {
           continue
         }
+
+        listing.validationError = '';
+
+        observer.next({status: `Hang on, we are busy publishing listing ${currentListing++}/${listingsToProcess}`});
 
         let template;
         try {
@@ -42,13 +46,15 @@ export class ListingManager {
   static validate(listings: ListingTemplate[], country?: string, expTime?: number): Observable<any> {
     return Observable.create(async (observer: any) => {
     
-      for (let index = 0; index < listings.length; index++) {
-        const listing = listings[index];
+      const listingsToProcess = _.chain(listings).filter(l => l.publish).size().value();
+      let currentListing = 1;
+
+      for (const listing of listings) {
         
         if (country && expTime) {
-          observer.next({status: `Hang on, we are busy estimating the fee for listing ${index + 1}/${listings.length}`});
+          observer.next({status: `Hang on, we are busy estimating the fee for listing ${currentListing++}/${listingsToProcess}`});
         } else {
-          observer.next({status: `Hang on, we are busy validating listing ${index + 1}/${listings.length}`});
+          observer.next({status: `Hang on, we are busy validating listing ${currentListing++}/${listingsToProcess}`});
         }
         listing.validationError = '';
 
