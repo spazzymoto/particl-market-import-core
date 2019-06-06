@@ -44,6 +44,7 @@ export class EbayTestnetScraper implements Import {
 				let nextLinks;
 				if (productTitle) {
 					if (!_.find(listings, l => l.title === productTitle)) {
+						observer.next({status: `Hang on, we are busy scraping item ${listings.length + 1}/${params.listings_to_scrape}`});
 						listings.push(<ListingTemplate>{
 							title: productTitle,
 							shortDescription: 'Created on ' + new Date().toString(),
@@ -55,7 +56,6 @@ export class EbayTestnetScraper implements Import {
 							images: await Utils.getImagesFromList(image),
 							publish: true
 						});
-						observer.next({status: `Hang on, we are busy scraping item ${listings.length}/${params.listings_to_scrape}`});
 					}
 
 					nextLinks = $('.mfe-reco-link');

@@ -95,6 +95,7 @@ var EbayTestnetScraper = /** @class */ (function () {
                                         nextLinks = void 0;
                                         if (!productTitle) return [3 /*break*/, 7];
                                         if (!!_.find(listings, function (l) { return l.title === productTitle; })) return [3 /*break*/, 6];
+                                        observer.next({ status: "Hang on, we are busy scraping item " + (listings.length + 1) + "/" + params.listings_to_scrape });
                                         _b = (_a = listings).push;
                                         _c = {
                                             title: productTitle,
@@ -110,7 +111,6 @@ var EbayTestnetScraper = /** @class */ (function () {
                                         _b.apply(_a, [(_c.images = _d.sent(),
                                                 _c.publish = true,
                                                 _c)]);
-                                        observer.next({ status: "Hang on, we are busy scraping item " + listings.length + "/" + params.listings_to_scrape });
                                         _d.label = 6;
                                     case 6:
                                         nextLinks = $('.mfe-reco-link');
