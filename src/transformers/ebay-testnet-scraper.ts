@@ -55,7 +55,7 @@ export class EbayTestnetScraper implements Import {
 							images: await Utils.getImagesFromList(image),
 							publish: true
 						});
-						observer.next({status: `importing ${listings.length}/${params.listings_to_scrape}`});
+						observer.next({status: `Hang on, we are busy scraping item ${listings.length}/${params.listings_to_scrape}`});
 					}
 
 					nextLinks = $('.mfe-reco-link');

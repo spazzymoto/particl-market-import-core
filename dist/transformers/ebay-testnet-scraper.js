@@ -110,7 +110,7 @@ var EbayTestnetScraper = /** @class */ (function () {
                                         _b.apply(_a, [(_c.images = _d.sent(),
                                                 _c.publish = true,
                                                 _c)]);
-                                        observer.next({ status: "importing " + listings.length + "/" + params.listings_to_scrape });
+                                        observer.next({ status: "Hang on, we are busy scraping item " + listings.length + "/" + params.listings_to_scrape });
                                         _d.label = 6;
                                     case 6:
                                         nextLinks = $('.mfe-reco-link');
