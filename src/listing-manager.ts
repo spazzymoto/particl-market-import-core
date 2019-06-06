@@ -22,6 +22,7 @@ export class ListingManager {
 
         listings.splice(index, 1);
       } catch (e) {
+        console.log('################### ERROR', e);
         listing.validationError = e.body.error;
 
         if (template) {
@@ -154,7 +155,6 @@ export class ListingManager {
 
     } catch (e) {
       await this.removeTemplate(template.id);
-      console.log(e)
       throw e;
     }
 

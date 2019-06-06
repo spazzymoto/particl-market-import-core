@@ -68,6 +68,7 @@ var ListingManager = /** @class */ (function () {
                         return [3 /*break*/, 8];
                     case 5:
                         e_1 = _a.sent();
+                        console.log('################### ERROR', e_1);
                         listing.validationError = e_1.body.error;
                         if (!template) return [3 /*break*/, 7];
                         return [4 /*yield*/, this.removeTemplate(template.id)];
@@ -225,7 +226,6 @@ var ListingManager = /** @class */ (function () {
                         return [4 /*yield*/, this.removeTemplate(template.id)];
                     case 9:
                         _a.sent();
-                        console.log(e_4);
                         throw e_4;
                     case 10: return [2 /*return*/, this.getTemplate(template.id)];
                 }
