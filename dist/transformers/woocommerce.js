@@ -94,9 +94,9 @@ var Woocommerce = /** @class */ (function (_super) {
     Woocommerce.prototype.getImportParams = function () {
         return {
             id: 'woocommerce-import',
-            name: 'Woocommerce Import',
+            name: 'WooCommerce',
             networks: ['mainnet', 'testnet'],
-            description: 'Populate the marketplace from a Woocommerce export',
+            description: 'Import your products from a Woocommerce shop',
             params: [
                 {
                     name: 'file',

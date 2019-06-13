@@ -89,9 +89,9 @@ var CSV = /** @class */ (function (_super) {
     CSV.prototype.getImportParams = function () {
         return {
             id: 'csv-import',
-            name: 'CSV Import',
+            name: 'CSV file',
             networks: ['mainnet', 'testnet'],
-            description: 'Populate the marketplace from a csv',
+            description: 'Import your products from a CSV file',
             params: [
                 {
                     name: 'file',
