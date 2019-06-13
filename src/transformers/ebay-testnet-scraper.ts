@@ -85,9 +85,9 @@ export class EbayTestnetScraper implements Import {
 	getImportParams() {
 		return {
 			id: 'ebay-testnet-scraper',
-			name: 'Ebay Testnet Scraper',
+			name: 'Ebay (Testnet Scraper)',
 			networks: ['testnet'],
-			description: 'Populate the marketplace by scraping ebay (Testing purposes)',
+			description: 'Populate the marketplace by scraping ebay (testing purposes)',
 			params: [{
 				name: 'listings_to_scrape',
 				type: 'number',

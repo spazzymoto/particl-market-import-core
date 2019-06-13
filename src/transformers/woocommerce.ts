@@ -34,9 +34,9 @@ export class Woocommerce extends BaseCSV implements Import {
 	getImportParams() {
 		return {
 			id: 'woocommerce-import',
-			name: 'Woocommerce Import',
+			name: 'WooCommerce',
 			networks: ['mainnet', 'testnet'],
-			description: 'Populate the marketplace from a Woocommerce export',
+			description: 'Import your products from a Woocommerce shop',
 			params: [
 				{
 					name: 'file',
