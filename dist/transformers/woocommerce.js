@@ -72,7 +72,7 @@ var Woocommerce = /** @class */ (function (_super) {
             basePrice: {
                 field: 'Regular price',
                 translate: function (price) {
-                    return parseFloat(price) * _this.getimportParam('currency_rate');
+                    return parseFloat(price) * (1 / _this.getimportParam('currency_rate'));
                 }
             },
             domesticShippingPrice: undefined,
@@ -109,7 +109,7 @@ var Woocommerce = /** @class */ (function (_super) {
                 {
                     name: 'currency_rate',
                     type: 'number',
-                    message: 'Currency rate',
+                    message: 'Fiat price per PART',
                     default: '',
                     mandatory: true
                 }
