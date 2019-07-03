@@ -194,7 +194,7 @@ var ListingManager = /** @class */ (function () {
     };
     ListingManager.createListingTemplate = function (listing, country) {
         return __awaiter(this, void 0, void 0, function () {
-            var templateParams, template, e_3, locationParams, escrowParams, e_4;
+            var templateParams, template, e_3, locationParams, e_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -207,9 +207,12 @@ var ListingManager = /** @class */ (function () {
                             listing.category.id,
                             'SALE',
                             'PARTICL',
-                            +listing.basePrice,
-                            +listing.domesticShippingPrice,
-                            +listing.internationalShippingPrice
+                            +listing.basePrice * 100000000,
+                            +listing.domesticShippingPrice * 100000000,
+                            +listing.internationalShippingPrice * 100000000,
+                            'MAD_CT',
+                            100,
+                            100
                         ];
                         _a.label = 1;
                     case 1:
@@ -222,7 +225,7 @@ var ListingManager = /** @class */ (function () {
                         e_3 = _a.sent();
                         throw e_3;
                     case 4:
-                        _a.trys.push([4, 8, , 10]);
+                        _a.trys.push([4, 7, , 9]);
                         locationParams = [
                             'location',
                             'add',
@@ -233,28 +236,17 @@ var ListingManager = /** @class */ (function () {
                         return [4 /*yield*/, market_rpc_1.MarketRPC.call('template', locationParams)];
                     case 5:
                         _a.sent();
-                        escrowParams = [
-                            'escrow',
-                            'add',
-                            template.id,
-                            'MAD',
-                            100,
-                            100
-                        ];
-                        return [4 /*yield*/, market_rpc_1.MarketRPC.call('template', escrowParams)];
+                        return [4 /*yield*/, market_rpc_1.MarketRPC.uploadImages(template.id, listing.images)];
                     case 6:
                         _a.sent();
-                        return [4 /*yield*/, market_rpc_1.MarketRPC.uploadImages(template.id, listing.images)];
+                        return [3 /*break*/, 9];
                     case 7:
-                        _a.sent();
-                        return [3 /*break*/, 10];
-                    case 8:
                         e_4 = _a.sent();
                         return [4 /*yield*/, this.removeTemplate(template.id)];
-                    case 9:
+                    case 8:
                         _a.sent();
                         throw e_4;
-                    case 10: return [2 /*return*/, this.getTemplate(template.id)];
+                    case 9: return [2 /*return*/, this.getTemplate(template.id)];
                 }
             });
         });

@@ -139,9 +139,12 @@ export class ListingManager {
       listing.category.id,
       'SALE',
       'PARTICL',
-      +listing.basePrice,
-      +listing.domesticShippingPrice,
-      +listing.internationalShippingPrice
+      +listing.basePrice * 100000000,
+      +listing.domesticShippingPrice * 100000000,
+      +listing.internationalShippingPrice * 100000000,
+      'MAD_CT',
+      100,
+      100
     ];
 
     let template;
@@ -162,17 +165,6 @@ export class ListingManager {
 
     
       await MarketRPC.call('template', locationParams);
-    
-      const escrowParams = [
-        'escrow',
-        'add',
-        template.id,
-        'MAD',
-        100,
-        100
-      ];
-
-      await MarketRPC.call('template', escrowParams);
 
       await MarketRPC.uploadImages(template.id, listing.images);
 
