@@ -7,13 +7,20 @@ export declare class CSV extends BaseCSV implements Import {
         name: string;
         networks: string[];
         description: string;
-        params: {
+        params: ({
             name: string;
             type: string;
             fileType: string;
             message: string;
             default: string;
             mandatory: boolean;
-        }[];
+        } | {
+            name: string;
+            type: string;
+            message: string;
+            default: string;
+            mandatory: boolean;
+            fileType?: undefined;
+        })[];
     };
 }

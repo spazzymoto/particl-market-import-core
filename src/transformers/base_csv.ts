@@ -16,7 +16,9 @@ export abstract class BaseCSV {
       const listings: ListingTemplate[] = [];
 
       const text = await fs.readFileSync(params.file, "utf8");
-      const csvData = await csv().fromString(text);
+      const csvData = await csv({
+        delimiter: params.delimiter || ","
+      }).fromString(text);
 
       if (csvData.length === 0) {
         return listings;
@@ -26,6 +28,8 @@ export abstract class BaseCSV {
         this.checkImportMapping(csvData);
       } catch (e) {
         observer.error(e.message);
+        observer.complete();
+        return;
       }
 
       for (const item of csvData) {

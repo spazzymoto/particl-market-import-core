@@ -47,46 +47,62 @@ var Utils = /** @class */ (function () {
     }
     Utils.getImagesFromList = function (imageList) {
         return __awaiter(this, void 0, void 0, function () {
-            var imagePaths, images, _i, imagePaths_1, imagePath, imageBuffer, response, e_1;
+            var imagePaths, images, _i, imagePaths_1, imagePath;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         imagePaths = imageList.split(',').map(function (i) { return i.trim(); });
                         images = [];
-                        _i = 0, imagePaths_1 = imagePaths;
-                        _a.label = 1;
+                        for (_i = 0, imagePaths_1 = imagePaths; _i < imagePaths_1.length; _i++) {
+                            imagePath = imagePaths_1[_i];
+                            if (imagePath.startsWith('https://') || imagePath.startsWith('http://')) {
+                                images.push(this.getImageFromURL(imagePath));
+                            }
+                            else {
+                                images.push(this.getImageFromPath(imagePath));
+                            }
+                        }
+                        return [4 /*yield*/, Promise.all(images)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    Utils.getImageFromURL = function (url) {
+        var _this = this;
+        return got(url, {
+            encoding: null
+        })
+            .then(function (response) {
+            return _this.processImage(response.body);
+        });
+    };
+    Utils.getImageFromPath = function (path) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            fs_1.default.readFile(path, null, function (err, image) {
+                resolve(_this.processImage(image));
+            });
+        });
+    };
+    Utils.processImage = function (image) {
+        return __awaiter(this, void 0, void 0, function () {
+            var e_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, Utils.convertToJPEG(image)];
                     case 1:
-                        if (!(_i < imagePaths_1.length)) return [3 /*break*/, 9];
-                        imagePath = imagePaths_1[_i];
-                        imageBuffer = void 0;
-                        if (!(imagePath.startsWith('https://') || imagePath.startsWith('http://'))) return [3 /*break*/, 3];
-                        return [4 /*yield*/, got(imagePath, {
-                                encoding: null
-                            })];
+                        image = _a.sent();
+                        return [4 /*yield*/, Utils.resizeImageToFit(image, 800, 800)];
                     case 2:
-                        response = _a.sent();
-                        imageBuffer = response.body;
+                        image = _a.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        imageBuffer = fs_1.default.readFileSync(imagePath);
-                        _a.label = 4;
-                    case 4:
-                        _a.trys.push([4, 7, , 8]);
-                        return [4 /*yield*/, Utils.convertToJPEG(imageBuffer)];
-                    case 5:
-                        imageBuffer = _a.sent();
-                        return [4 /*yield*/, Utils.resizeImageToFit(imageBuffer, 800, 800)];
-                    case 6:
-                        imageBuffer = _a.sent();
-                        images.push("data:image/jpeg;base64," + imageBuffer.toString('base64'));
-                        return [3 /*break*/, 8];
-                    case 7:
                         e_1 = _a.sent();
-                        return [3 /*break*/, 8];
-                    case 8:
-                        _i++;
-                        return [3 /*break*/, 1];
-                    case 9: return [2 /*return*/, images];
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/, "data:image/jpeg;base64," + image.toString('base64')];
                 }
             });
         });

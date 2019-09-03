@@ -56,7 +56,9 @@ var BaseCSV = /** @class */ (function () {
                         return [4 /*yield*/, fs_1.default.readFileSync(params.file, "utf8")];
                     case 1:
                         text = _g.sent();
-                        return [4 /*yield*/, csvtojson_1.default().fromString(text)];
+                        return [4 /*yield*/, csvtojson_1.default({
+                                delimiter: params.delimiter || ","
+                            }).fromString(text)];
                     case 2:
                         csvData = _g.sent();
                         if (csvData.length === 0) {
@@ -67,6 +69,8 @@ var BaseCSV = /** @class */ (function () {
                         }
                         catch (e) {
                             observer.error(e.message);
+                            observer.complete();
+                            return [2 /*return*/];
                         }
                         _i = 0, csvData_1 = csvData;
                         _g.label = 3;

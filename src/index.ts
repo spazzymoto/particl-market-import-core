@@ -1,9 +1,8 @@
-import { CSV, Woocommerce, EbayTestnetScraper } from './transformers';
+import { CSV, Woocommerce } from './transformers';
 
 export const Transformers = [ 
-  CSV, 
-  Woocommerce, 
-  EbayTestnetScraper 
+  CSV,
+  Woocommerce
 ];
 
 export { Import, ListingTemplate } from './interfaces';

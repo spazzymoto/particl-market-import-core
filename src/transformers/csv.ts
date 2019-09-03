@@ -40,6 +40,13 @@ export class CSV extends BaseCSV implements Import {
 					message: 'CSV file to import',
 					default: '',
 					mandatory: true
+				},
+				{
+					name: 'delimiter',
+					type: 'text',
+					message: 'Value delimiter',
+					default: ',',
+					mandatory: true
 				}
 			]
 		}

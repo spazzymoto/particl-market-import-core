@@ -11,25 +11,39 @@ export class Utils {
 		const imagePaths = imageList.split(',').map(i => i.trim());
 		const images = [];
 		for (let imagePath of imagePaths) {
-			let imageBuffer: Buffer;
 			if (imagePath.startsWith('https://') || imagePath.startsWith('http://')) {
-				const response = await got(imagePath, {
-					encoding: null
-				});
-
-				imageBuffer = response.body;
+				images.push(this.getImageFromURL(imagePath));
 			} else {
-				imageBuffer = fs.readFileSync(imagePath);
+				images.push(this.getImageFromPath(imagePath));
 			}
-
-			try {
-				imageBuffer = await Utils.convertToJPEG(imageBuffer);
-				imageBuffer = await Utils.resizeImageToFit(imageBuffer, 800, 800);
-
-				images.push(`data:image/jpeg;base64,${imageBuffer.toString('base64')}`);
-			} catch (e) {}
 		}
-		return images;
+		return await Promise.all(images);
+	}
+
+	private static getImageFromURL(url: string): Promise<string> {
+		return got(url, {
+			encoding: null
+		})
+		.then((response: any) => {
+			return this.processImage(response.body)
+		});
+	}
+
+	private static getImageFromPath(path: string): Promise<string> {
+		return new Promise((resolve, reject) => {
+			fs.readFile(path, null, (err, image) => {
+				resolve(this.processImage(image));
+			});
+		});
+	}
+
+	private static async processImage(image: Buffer): Promise<string> {
+		try {
+			image = await Utils.convertToJPEG(image);
+			image = await Utils.resizeImageToFit(image, 800, 800);
+		} catch (e) {}
+
+		return `data:image/jpeg;base64,${image.toString('base64')}`;
 	}
 
 	static async convertToJPEG(imageBuffer: Buffer): Promise<Buffer> {
