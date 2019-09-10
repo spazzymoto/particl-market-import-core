@@ -77,15 +77,15 @@ export class ListingManager {
           missing += 'long description, '
         }
 
-        if (!(listing.basePrice > 0)) {
+        if (listing.basePrice < 0) {
           missing += 'price per item, '
         }
 
-        if (!(listing.domesticShippingPrice > 0)) {
+        if (listing.domesticShippingPrice < 0) {
           missing += 'domestic shipping price, '
         }
 
-        if (!(listing.internationalShippingPrice > 0)) {
+        if (listing.internationalShippingPrice < 0) {
           missing += 'international shipping price, '
         }
 
@@ -93,9 +93,14 @@ export class ListingManager {
           missing += 'category, '
         }
 
+        const minShipping = Math.min(listing.domesticShippingPrice, listing.internationalShippingPrice);
+        if (listing.basePrice + minShipping < 0.0001) {
+          listing.validationError = 'Combined total cost (Listing Price + Lowest Shipping) cannot be less than 0.0001.';
+        }
+
         if (missing) {
           missing = missing.substring(0, missing.length-2);
-          listing.validationError = `The following fields are missing ${missing}. Please correct these before publishing.`;
+          listing.validationError = (listing.validationError != '' ? listing.validationError + '\n' : '') + `The following fields are missing ${missing}. Please correct these before publishing.`;
           continue;
         }
 

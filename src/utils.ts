@@ -84,13 +84,16 @@ export class Utils {
 
 	static async searchCategories(category: string):	Promise<Category | null> {
 		return new Promise(async (resolve, reject) => {
+			if (category.trim() === '') {
+				return resolve(null);
+			}
 			try {
-				const result = await MarketRPC.call('category', ['search', category]);
-				if (result && result[0]) {
-					return resolve({
-						id: result[0].id,
-						name: result[0].name
-					});
+				const results = await MarketRPC.call('category', ['search', category]);
+				for (let i = 0; i < results.length; i++) {
+					const result = results[i];
+					if (result.parentItemCategoryId !== null && result.parentItemCategoryId !== 1) {
+						return resolve(result);
+					}
 				}
 				return resolve(null);
 			} catch (e) {

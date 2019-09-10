@@ -6,6 +6,7 @@ export interface Import {
 export interface Category {
     id: number;
     name: string;
+    item: string;
 }
 export interface ListingTemplate {
     id: string;

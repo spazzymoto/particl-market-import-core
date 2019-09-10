@@ -177,26 +177,31 @@ var Utils = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var result, e_4;
+                        var results, i, result, e_4;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
-                                    _a.trys.push([0, 2, , 3]);
-                                    return [4 /*yield*/, market_rpc_1.MarketRPC.call('category', ['search', category])];
+                                    if (category.trim() === '') {
+                                        return [2 /*return*/, resolve(null)];
+                                    }
+                                    _a.label = 1;
                                 case 1:
-                                    result = _a.sent();
-                                    if (result && result[0]) {
-                                        return [2 /*return*/, resolve({
-                                                id: result[0].id,
-                                                name: result[0].name
-                                            })];
+                                    _a.trys.push([1, 3, , 4]);
+                                    return [4 /*yield*/, market_rpc_1.MarketRPC.call('category', ['search', category])];
+                                case 2:
+                                    results = _a.sent();
+                                    for (i = 0; i < results.length; i++) {
+                                        result = results[i];
+                                        if (result.parentItemCategoryId !== null && result.parentItemCategoryId !== 1) {
+                                            return [2 /*return*/, resolve(result)];
+                                        }
                                     }
                                     return [2 /*return*/, resolve(null)];
-                                case 2:
+                                case 3:
                                     e_4 = _a.sent();
                                     reject(e_4);
-                                    return [3 /*break*/, 3];
-                                case 3: return [2 /*return*/];
+                                    return [3 /*break*/, 4];
+                                case 4: return [2 /*return*/];
                             }
                         });
                     }); })];
