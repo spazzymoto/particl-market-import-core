@@ -133,7 +133,7 @@ var ListingManager = /** @class */ (function () {
                         if (!listing.longDescription.trim()) {
                             missing += 'long description, ';
                         }
-                        if (listing.basePrice < 0) {
+                        if (listing.basePrice <= 0) {
                             missing += 'price per item, ';
                         }
                         if (listing.domesticShippingPrice < 0) {

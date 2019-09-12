@@ -77,7 +77,7 @@ export class ListingManager {
           missing += 'long description, '
         }
 
-        if (listing.basePrice < 0) {
+        if (listing.basePrice <= 0) {
           missing += 'price per item, '
         }
 
