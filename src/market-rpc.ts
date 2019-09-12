@@ -19,7 +19,7 @@ export class MarketRPC {
           body: postData
         })
         .then((res: any) => resolve(res.body.result))
-        .catch((e: any) => reject(e));
+        .catch((e: any) => reject(this.extractMPErrorMessage(e.body)));
     });
   }
 
@@ -46,5 +46,14 @@ export class MarketRPC {
           .then((res: any) => resolve(res.body.result))
           .catch((e: any) => reject(e));
     });
+  }
+
+  private static extractMPErrorMessage(errorObj: any): string {
+    if (errorObj && typeof errorObj.message === 'string') {
+      return errorObj.message;
+    } else if (errorObj && Object.prototype.toString.call(errorObj.error) === '[object Object]') {
+      return this.extractMPErrorMessage(errorObj.error);
+    }
+    return 'Invalid marketplace request';
   }
 }

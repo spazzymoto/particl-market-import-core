@@ -9,12 +9,12 @@ export class Woocommerce extends BaseCSV implements Import {
     title: 'Name',
     shortDescription: 'Short description',
     longDescription: 'Description',
-		category: {
-			field: 'Categories',
-			translate: async (catagory: string) => {
-				return await Utils.searchCategories(catagory);
-			}
-		},
+	category: {
+		field: 'Categories',
+		translate: async (catagory: string) => {
+			return await Utils.searchCategories(catagory);
+		}
+	},
     basePrice: {
       field: 'Regular price',
       translate: (price: string) => {

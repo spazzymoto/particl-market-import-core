@@ -15,9 +15,18 @@ export class CSV extends BaseCSV implements Import {
 				return await Utils.searchCategories(catagory);
 			}
 		},
-		basePrice: 'base_price',
-		domesticShippingPrice: 'domestic_shipping_price',
-		internationalShippingPrice: 'international_shipping_price',
+		basePrice: {
+			field: 'base_price',
+			translate: Utils.convertToFloat
+		},
+		domesticShippingPrice: {
+			field: 'domestic_shipping_price',
+			translate: Utils.convertToFloat
+		},
+		internationalShippingPrice: {
+			field: 'international_shipping_price',
+			translate: Utils.convertToFloat
+		},
 		images: {
 			field: 'images',
 			translate: async (images: string) => {

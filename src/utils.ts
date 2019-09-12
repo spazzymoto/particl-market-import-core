@@ -7,7 +7,7 @@ const got = require('got');
 
 export class Utils {
 
-  static async getImagesFromList(imageList: string) {
+	static async getImagesFromList(imageList: string) {
 		const imagePaths = imageList.split(',').map(i => i.trim());
 		const images = [];
 		for (let imagePath of imagePaths) {
@@ -17,7 +17,21 @@ export class Utils {
 				images.push(this.getImageFromPath(imagePath));
 			}
 		}
-		return await Promise.all(images);
+		const results = await Promise.all(images);
+
+		let errors = '';
+		const result = [];
+		for (let i = 0; i < results.length; i++) {
+			const image = results[i];
+			if(!image) {
+				const msg = `\tError fetching ${imagePaths[i]}`;
+				errors += (errors === '') ? msg : `\n${msg}`;
+			} else {
+				result.push(image);
+			}
+		}
+
+		return {type: 'BULK_RESULT', errors, result};
 	}
 
 	private static getImageFromURL(url: string): Promise<string> {
@@ -26,12 +40,18 @@ export class Utils {
 		})
 		.then((response: any) => {
 			return this.processImage(response.body)
+		})
+		.catch((error: any) => {
+			return;
 		});
 	}
 
 	private static getImageFromPath(path: string): Promise<string> {
 		return new Promise((resolve, reject) => {
 			fs.readFile(path, null, (err, image) => {
+				if (err) {
+					return resolve();
+				}
 				resolve(this.processImage(image));
 			});
 		});
@@ -82,10 +102,10 @@ export class Utils {
 		});
 	}
 
-	static async searchCategories(category: string):	Promise<Category | null> {
+	static async searchCategories(category: string): Promise<Category | undefined> {
 		return new Promise(async (resolve, reject) => {
 			if (category.trim() === '') {
-				return resolve(null);
+				return resolve(undefined);
 			}
 			try {
 				const results = await MarketRPC.call('category', ['search', category]);
@@ -95,10 +115,18 @@ export class Utils {
 						return resolve(result);
 					}
 				}
-				return resolve(null);
+				return resolve(undefined);
 			} catch (e) {
 				reject(e);
 			}
 		});
+	}
+
+	static convertToFloat(value: string) {
+		let float = parseFloat(value);
+		if (isNaN(float)) {
+			throw new Error(`Invalid number: ${value}`)
+		}
+		return float;
 	}
 }

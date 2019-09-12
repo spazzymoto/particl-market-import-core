@@ -81,7 +81,7 @@ var ListingManager = /** @class */ (function () {
                         return [3 /*break*/, 8];
                     case 5:
                         e_1 = _a.sent();
-                        listing.validationError = e_1.body.error;
+                        listing.validationError = e_1;
                         if (!template) return [3 /*break*/, 7];
                         return [4 /*yield*/, this.removeTemplate(template.id)];
                     case 6:
@@ -176,7 +176,7 @@ var ListingManager = /** @class */ (function () {
                     case 7: return [3 /*break*/, 12];
                     case 8:
                         e_2 = _a.sent();
-                        listing.validationError = e_2.body.error;
+                        listing.validationError = e_2;
                         return [3 /*break*/, 12];
                     case 9:
                         if (!template) return [3 /*break*/, 11];
@@ -211,9 +211,9 @@ var ListingManager = /** @class */ (function () {
                             listing.category.id,
                             'SALE',
                             'PARTICL',
-                            +listing.basePrice * 100000000,
-                            +listing.domesticShippingPrice * 100000000,
-                            +listing.internationalShippingPrice * 100000000,
+                            listing.basePrice,
+                            listing.domesticShippingPrice,
+                            listing.internationalShippingPrice,
                             'MAD_CT',
                             100,
                             100

@@ -6,6 +6,7 @@ var MarketRPC = /** @class */ (function () {
     function MarketRPC() {
     }
     MarketRPC.call = function (method, params) {
+        var _this = this;
         return new Promise(function (resolve, reject) {
             var postData = {
                 "method": method,
@@ -20,7 +21,7 @@ var MarketRPC = /** @class */ (function () {
                 body: postData
             })
                 .then(function (res) { return resolve(res.body.result); })
-                .catch(function (e) { return reject(e); });
+                .catch(function (e) { return reject(_this.extractMPErrorMessage(e.body)); });
         });
     };
     MarketRPC.uploadImages = function (templateId, base64DataURIArray) {
@@ -40,6 +41,15 @@ var MarketRPC = /** @class */ (function () {
                 .then(function (res) { return resolve(res.body.result); })
                 .catch(function (e) { return reject(e); });
         });
+    };
+    MarketRPC.extractMPErrorMessage = function (errorObj) {
+        if (errorObj && typeof errorObj.message === 'string') {
+            return errorObj.message;
+        }
+        else if (errorObj && Object.prototype.toString.call(errorObj.error) === '[object Object]') {
+            return this.extractMPErrorMessage(errorObj.error);
+        }
+        return 'Invalid marketplace request';
     };
     return MarketRPC;
 }());

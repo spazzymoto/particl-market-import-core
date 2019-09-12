@@ -30,7 +30,7 @@ export class ListingManager {
 
           listing.id = template.id;
         } catch (e) {
-          listing.validationError = e.body.error;
+          listing.validationError = e;
 
           if (template) {
             await this.removeTemplate(template.id);
@@ -119,7 +119,7 @@ export class ListingManager {
               listing.fee = +feeEstimate.fee;
             }
           } catch (e) {
-            listing.validationError = e.body.error;
+            listing.validationError = e;
           } finally {
             if (template) {
               await this.removeTemplate(template.id);
@@ -144,9 +144,9 @@ export class ListingManager {
       listing.category.id,
       'SALE',
       'PARTICL',
-      +listing.basePrice * 100000000,
-      +listing.domesticShippingPrice * 100000000,
-      +listing.internationalShippingPrice * 100000000,
+      listing.basePrice,
+      listing.domesticShippingPrice,
+      listing.internationalShippingPrice,
       'MAD_CT',
       100,
       100

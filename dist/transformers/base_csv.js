@@ -47,20 +47,20 @@ var BaseCSV = /** @class */ (function () {
     BaseCSV.prototype.load = function (params) {
         var _this = this;
         return rxjs_1.Observable.create(function (observer) { return __awaiter(_this, void 0, void 0, function () {
-            var listings, text, csvData, _i, csvData_1, item, transformed, _a, _b, _c, key, mappedKey, transformFunction, _d, _e, _f;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
+            var listings, text, csvData, _i, csvData_1, item, transformed, _a, _b, _c, key, mappedKey, transformFunction, transformResult, errorMessage, e_1, errorMessage;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         this.importParams = params;
                         listings = [];
                         return [4 /*yield*/, fs_1.default.readFileSync(params.file, "utf8")];
                     case 1:
-                        text = _g.sent();
+                        text = _d.sent();
                         return [4 /*yield*/, csvtojson_1.default({
                                 delimiter: params.delimiter || ","
                             }).fromString(text)];
                     case 2:
-                        csvData = _g.sent();
+                        csvData = _d.sent();
                         if (csvData.length === 0) {
                             return [2 /*return*/, listings];
                         }
@@ -73,19 +73,21 @@ var BaseCSV = /** @class */ (function () {
                             return [2 /*return*/];
                         }
                         _i = 0, csvData_1 = csvData;
-                        _g.label = 3;
+                        _d.label = 3;
                     case 3:
-                        if (!(_i < csvData_1.length)) return [3 /*break*/, 12];
+                        if (!(_i < csvData_1.length)) return [3 /*break*/, 15];
                         item = csvData_1[_i];
                         observer.next({ status: "Hang on, we are busy importing listing " + (listings.length + 1) + "/" + csvData.length });
-                        transformed = {};
+                        transformed = {
+                            validationError: ''
+                        };
                         _a = [];
                         for (_b in this.importMapping)
                             _a.push(_b);
                         _c = 0;
-                        _g.label = 4;
+                        _d.label = 4;
                     case 4:
-                        if (!(_c < _a.length)) return [3 /*break*/, 10];
+                        if (!(_c < _a.length)) return [3 /*break*/, 13];
                         key = _a[_c];
                         mappedKey = void 0;
                         transformFunction = void 0;
@@ -98,34 +100,50 @@ var BaseCSV = /** @class */ (function () {
                                 transformFunction = this.importMapping[key].translate;
                                 break;
                         }
-                        if (!mappedKey) return [3 /*break*/, 8];
-                        _d = transformed;
-                        _e = key;
-                        if (!transformFunction) return [3 /*break*/, 6];
-                        return [4 /*yield*/, transformFunction(item[mappedKey])];
+                        if (!mappedKey) return [3 /*break*/, 11];
+                        if (!transformFunction) return [3 /*break*/, 9];
+                        _d.label = 5;
                     case 5:
-                        _f = _g.sent();
-                        return [3 /*break*/, 7];
+                        _d.trys.push([5, 7, , 8]);
+                        return [4 /*yield*/, transformFunction(item[mappedKey])];
                     case 6:
-                        _f = item[mappedKey];
-                        _g.label = 7;
+                        transformResult = _d.sent();
+                        if (typeof transformResult === 'object' && transformResult.hasOwnProperty('type') && transformResult.type === 'BULK_RESULT') {
+                            transformed[key] = transformResult.result;
+                            if (transformResult.errors.trim() !== '') {
+                                errorMessage = "Field " + key + " had the following error(s):\n" + transformResult.errors;
+                                transformed.validationError += (transformed.validationError === '') ? errorMessage : "\n" + errorMessage;
+                            }
+                        }
+                        else {
+                            transformed[key] = transformResult;
+                        }
+                        return [3 /*break*/, 8];
                     case 7:
-                        _d[_e] = _f;
-                        return [3 /*break*/, 9];
-                    case 8:
+                        e_1 = _d.sent();
                         transformed[key] = undefined;
-                        _g.label = 9;
+                        errorMessage = "Field " + key + " had the following error(s):\n\t" + e_1.message;
+                        transformed.validationError += (transformed.validationError === '') ? errorMessage : "\n" + errorMessage;
+                        return [3 /*break*/, 8];
+                    case 8: return [3 /*break*/, 10];
                     case 9:
+                        transformed[key] = item[mappedKey];
+                        _d.label = 10;
+                    case 10: return [3 /*break*/, 12];
+                    case 11:
+                        transformed[key] = undefined;
+                        _d.label = 12;
+                    case 12:
                         _c++;
                         return [3 /*break*/, 4];
-                    case 10:
+                    case 13:
                         transformed.publish = true;
                         listings.push(transformed);
-                        _g.label = 11;
-                    case 11:
+                        _d.label = 14;
+                    case 14:
                         _i++;
                         return [3 /*break*/, 3];
-                    case 12:
+                    case 15:
                         observer.next({ result: listings });
                         observer.complete();
                         return [2 /*return*/];

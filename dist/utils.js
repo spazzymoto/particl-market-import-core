@@ -47,7 +47,7 @@ var Utils = /** @class */ (function () {
     }
     Utils.getImagesFromList = function (imageList) {
         return __awaiter(this, void 0, void 0, function () {
-            var imagePaths, images, _i, imagePaths_1, imagePath;
+            var imagePaths, images, _i, imagePaths_1, imagePath, results, errors, result, i, image, msg;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -63,7 +63,21 @@ var Utils = /** @class */ (function () {
                             }
                         }
                         return [4 /*yield*/, Promise.all(images)];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 1:
+                        results = _a.sent();
+                        errors = '';
+                        result = [];
+                        for (i = 0; i < results.length; i++) {
+                            image = results[i];
+                            if (!image) {
+                                msg = "\tError fetching " + imagePaths[i];
+                                errors += (errors === '') ? msg : "\n" + msg;
+                            }
+                            else {
+                                result.push(image);
+                            }
+                        }
+                        return [2 /*return*/, { type: 'BULK_RESULT', errors: errors, result: result }];
                 }
             });
         });
@@ -75,12 +89,18 @@ var Utils = /** @class */ (function () {
         })
             .then(function (response) {
             return _this.processImage(response.body);
+        })
+            .catch(function (error) {
+            return;
         });
     };
     Utils.getImageFromPath = function (path) {
         var _this = this;
         return new Promise(function (resolve, reject) {
             fs_1.default.readFile(path, null, function (err, image) {
+                if (err) {
+                    return resolve();
+                }
                 resolve(_this.processImage(image));
             });
         });
@@ -182,7 +202,7 @@ var Utils = /** @class */ (function () {
                             switch (_a.label) {
                                 case 0:
                                     if (category.trim() === '') {
-                                        return [2 /*return*/, resolve(null)];
+                                        return [2 /*return*/, resolve(undefined)];
                                     }
                                     _a.label = 1;
                                 case 1:
@@ -196,7 +216,7 @@ var Utils = /** @class */ (function () {
                                             return [2 /*return*/, resolve(result)];
                                         }
                                     }
-                                    return [2 /*return*/, resolve(null)];
+                                    return [2 /*return*/, resolve(undefined)];
                                 case 3:
                                     e_4 = _a.sent();
                                     reject(e_4);
@@ -207,6 +227,13 @@ var Utils = /** @class */ (function () {
                     }); })];
             });
         });
+    };
+    Utils.convertToFloat = function (value) {
+        var float = parseFloat(value);
+        if (isNaN(float)) {
+            throw new Error("Invalid number: " + value);
+        }
+        return float;
     };
     return Utils;
 }());

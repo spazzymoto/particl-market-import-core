@@ -69,9 +69,18 @@ var CSV = /** @class */ (function (_super) {
                     });
                 }); }
             },
-            basePrice: 'base_price',
-            domesticShippingPrice: 'domestic_shipping_price',
-            internationalShippingPrice: 'international_shipping_price',
+            basePrice: {
+                field: 'base_price',
+                translate: utils_1.Utils.convertToFloat
+            },
+            domesticShippingPrice: {
+                field: 'domestic_shipping_price',
+                translate: utils_1.Utils.convertToFloat
+            },
+            internationalShippingPrice: {
+                field: 'international_shipping_price',
+                translate: utils_1.Utils.convertToFloat
+            },
             images: {
                 field: 'images',
                 translate: function (images) { return __awaiter(_this, void 0, void 0, function () {

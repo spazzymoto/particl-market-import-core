@@ -34,7 +34,9 @@ export abstract class BaseCSV {
 
       for (const item of csvData) {
         observer.next({status: `Hang on, we are busy importing listing ${listings.length + 1}/${csvData.length}`});
-        const transformed: any = {};
+        const transformed: any = {
+          validationError: ''
+        };
         for (const key in this.importMapping) {
           let mappedKey;
           let transformFunction;
@@ -52,7 +54,27 @@ export abstract class BaseCSV {
           }
           
           if (mappedKey) {
-            transformed[key] = transformFunction ? await transformFunction(item[mappedKey]) : item[mappedKey];
+            if (transformFunction) {
+              try {
+                const transformResult = await transformFunction(item[mappedKey]);
+                
+                if (typeof transformResult === 'object' && transformResult.hasOwnProperty('type') && transformResult.type === 'BULK_RESULT') {
+                  transformed[key] = transformResult.result;
+                  if (transformResult.errors.trim() !== '') {
+                    const errorMessage = `Field ${key} had the following error(s):\n${transformResult.errors}`;
+                    transformed.validationError += (transformed.validationError === '') ? errorMessage : `\n${errorMessage}`;
+                  }
+                } else {
+                  transformed[key] = transformResult;
+                }
+              } catch (e) {
+                transformed[key] = undefined;
+                const errorMessage = `Field ${key} had the following error(s):\n\t${e.message}`;
+                transformed.validationError += (transformed.validationError === '') ? errorMessage : `\n${errorMessage}`;
+              }
+            } else {
+              transformed[key] = item[mappedKey];
+            }
           } else {
             transformed[key] = undefined;
           }
