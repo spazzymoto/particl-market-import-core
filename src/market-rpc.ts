@@ -26,6 +26,10 @@ export class MarketRPC {
   static uploadImages(templateId: number, base64DataURIArray: any[]) {
     return new Promise((resolve, reject) => {
 
+      if (base64DataURIArray && base64DataURIArray.length === 0) {
+        return resolve();
+      }
+
       const form = new FormData();
 
       for (let idx = 0; idx < base64DataURIArray.length; idx++) {

@@ -26,6 +26,9 @@ var MarketRPC = /** @class */ (function () {
     };
     MarketRPC.uploadImages = function (templateId, base64DataURIArray) {
         return new Promise(function (resolve, reject) {
+            if (base64DataURIArray && base64DataURIArray.length === 0) {
+                return resolve();
+            }
             var form = new FormData();
             for (var idx = 0; idx < base64DataURIArray.length; idx++) {
                 form.append("image-" + idx, Buffer.from(base64DataURIArray[idx].split(',')[1], 'base64'), {
