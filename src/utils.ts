@@ -8,67 +8,54 @@ const got = require('got');
 export class Utils {
 
 	static async getImagesFromList(imageList: string) {
-
-		if (imageList.trim() === '') {
-			return {type: 'BULK_RESULT', errors: '', result: []};
-		}
-
 		const imagePaths = imageList.split(',').map(i => i.trim());
-		const images = [];
-		for (let imagePath of imagePaths) {
-			if (imagePath.startsWith('https://') || imagePath.startsWith('http://')) {
-				images.push(this.getImageFromURL(imagePath));
-			} else {
-				images.push(this.getImageFromPath(imagePath));
-			}
-		}
-		const results = await Promise.all(images);
-
-		let errors = '';
 		const result = [];
-		for (let i = 0; i < results.length; i++) {
-			const image = results[i];
-			if(!image) {
-				const msg = `\tError fetching ${imagePaths[i]}`;
+		let errors = '';
+		for (let imagePath of imagePaths) {
+			try {
+				let imageBuffer: Buffer;
+				if (imagePath.startsWith('https://') || imagePath.startsWith('http://')) {
+					const response = await got(imagePath, {
+						encoding: null
+					});
+
+					imageBuffer = response.body;
+				} else {
+					imageBuffer = fs.readFileSync(imagePath);
+				}
+
+			
+				imageBuffer = await Utils.convertToJPEG(imageBuffer);
+				imageBuffer = await Utils.resizeImageToFit(imageBuffer, 800, 800);
+
+				result.push(`data:image/jpeg;base64,${imageBuffer.toString('base64')}`);
+			} catch (e) {
+				let errorMessage = e.message;
+				if (e.hasOwnProperty('code')) {
+					switch (e.code) {
+						case 'ETIMEDOUT':
+							errorMessage = 'Request timed out';
+							break;
+						case 'ECONNRESET':
+							errorMessage = 'Connection reset by host';
+							break;
+						case 'ECONNREFUSED':
+							errorMessage = 'Connection refused by host';
+							break;
+						case 'ENOTFOUND':
+							errorMessage = 'URL not found';
+							break;
+						case 'ENETUNREACH':
+							errorMessage = 'No internet connection';
+							break;
+					}
+				}
+
+				const msg = `\t${errorMessage} ("${imagePath}")`;
 				errors += (errors === '') ? msg : `\n${msg}`;
-			} else {
-				result.push(image);
 			}
 		}
-
 		return {type: 'BULK_RESULT', errors, result};
-	}
-
-	private static getImageFromURL(url: string): Promise<string> {
-		return got(url, {
-			encoding: null
-		})
-		.then((response: any) => {
-			return this.processImage(response.body)
-		})
-		.catch((error: any) => {
-			return;
-		});
-	}
-
-	private static getImageFromPath(path: string): Promise<string> {
-		return new Promise((resolve, reject) => {
-			fs.readFile(path, null, (err, image) => {
-				if (err) {
-					return resolve();
-				}
-				resolve(this.processImage(image));
-			});
-		});
-	}
-
-	private static async processImage(image: Buffer): Promise<string> {
-		try {
-			image = await Utils.convertToJPEG(image);
-			image = await Utils.resizeImageToFit(image, 800, 800);
-		} catch (e) {}
-
-		return `data:image/jpeg;base64,${image.toString('base64')}`;
 	}
 
 	static async convertToJPEG(imageBuffer: Buffer): Promise<Buffer> {
@@ -78,6 +65,9 @@ export class Utils {
 
 				if (image.getMIME() !== 'image/jpeg') {
 					image.getBuffer(Jimp.MIME_JPEG, (err, buffer) => {
+						if (err) {
+							return reject(err);
+						}
 						resolve(buffer);
 					});
 				} else {
@@ -96,6 +86,9 @@ export class Utils {
 				if (maxWidth > 0 && maxHeight > 0 && ( (image.bitmap.width > maxWidth) || (image.bitmap.height > maxHeight))) {
 					image.scaleToFit(maxWidth, maxHeight);
 					image.getBuffer(Jimp.MIME_JPEG, (err: any, buffer: any) => {
+						if (err) {
+							return reject(err);
+						}
 						resolve(buffer);
 					});
 				} else {

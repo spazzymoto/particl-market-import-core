@@ -6,9 +6,6 @@ export declare class Utils {
         errors: string;
         result: string[];
     }>;
-    private static getImageFromURL;
-    private static getImageFromPath;
-    private static processImage;
     static convertToJPEG(imageBuffer: Buffer): Promise<Buffer>;
     static resizeImageToFit(imageBuffer: Buffer, maxWidth: number, maxHeight: number): Promise<Buffer>;
     static searchCategories(category: string): Promise<Category | undefined>;

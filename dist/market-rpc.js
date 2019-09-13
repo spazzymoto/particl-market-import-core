@@ -25,6 +25,7 @@ var MarketRPC = /** @class */ (function () {
         });
     };
     MarketRPC.uploadImages = function (templateId, base64DataURIArray) {
+        var _this = this;
         return new Promise(function (resolve, reject) {
             if (base64DataURIArray && base64DataURIArray.length === 0) {
                 return resolve();
@@ -42,7 +43,7 @@ var MarketRPC = /** @class */ (function () {
                 body: form
             })
                 .then(function (res) { return resolve(res.body.result); })
-                .catch(function (e) { return reject(e); });
+                .catch(function (e) { return reject(_this.extractMPErrorMessage(e.body)); });
         });
     };
     MarketRPC.extractMPErrorMessage = function (errorObj) {

@@ -48,7 +48,7 @@ export class MarketRPC {
             body: form
           })
           .then((res: any) => resolve(res.body.result))
-          .catch((e: any) => reject(e));
+          .catch((e: any) => reject(this.extractMPErrorMessage(e.body)));
     });
   }
 
