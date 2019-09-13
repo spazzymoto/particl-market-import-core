@@ -8,6 +8,9 @@ const got = require('got');
 export class Utils {
 
 	static async getImagesFromList(imageList: string) {
+		if (imageList.trim() === '') {
+			return {type: 'BULK_RESULT', errors: '', result: []};
+		}
 		const imagePaths = imageList.split(',').map(i => i.trim());
 		const result = [];
 		let errors = '';

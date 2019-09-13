@@ -51,6 +51,9 @@ var Utils = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (imageList.trim() === '') {
+                            return [2 /*return*/, { type: 'BULK_RESULT', errors: '', result: [] }];
+                        }
                         imagePaths = imageList.split(',').map(function (i) { return i.trim(); });
                         result = [];
                         errors = '';
